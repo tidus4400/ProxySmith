@@ -49,6 +49,26 @@ struct PDFExportServiceTests {
             #expect(segment.isOutside(rect))
         }
     }
+
+    @Test
+    func cutGuideSegmentsAlignToRoundedTrimCorners() {
+        let rect = CGRect(x: 100, y: 200, width: 180, height: 252)
+        let inset = PDFExportService.roundedTrimCornerInset(for: rect)
+        let segments = PDFExportService.cutGuideSegments(for: rect)
+
+        let topBottomVerticalGuides = segments
+            .filter { $0.start.y != $0.end.y }
+            .map(\.start.x)
+            .sorted()
+        let leftRightHorizontalGuides = segments
+            .filter { $0.start.x != $0.end.x }
+            .map(\.start.y)
+            .sorted()
+
+        #expect(inset == 13.5)
+        #expect(topBottomVerticalGuides == [rect.minX + inset, rect.minX + inset, rect.maxX - inset, rect.maxX - inset])
+        #expect(leftRightHorizontalGuides == [rect.minY + inset, rect.minY + inset, rect.maxY - inset, rect.maxY - inset])
+    }
 }
 
 private extension CutGuideSegment {

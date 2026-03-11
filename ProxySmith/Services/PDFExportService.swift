@@ -137,42 +137,45 @@ struct PDFExportService {
     static func cutGuideSegments(for rect: CGRect) -> [CutGuideSegment] {
         let markLength: CGFloat = 9
         let markGap: CGFloat = 2
-        let horizontalInset = max(6, min(12, rect.width * 0.06))
-        let verticalInset = max(6, min(12, rect.height * 0.04))
+        let trimCornerInset = roundedTrimCornerInset(for: rect)
 
         return [
             CutGuideSegment(
-                start: CGPoint(x: rect.minX - markGap, y: rect.maxY - verticalInset),
-                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.maxY - verticalInset)
+                start: CGPoint(x: rect.minX - markGap, y: rect.maxY - trimCornerInset),
+                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.maxY - trimCornerInset)
             ),
             CutGuideSegment(
-                start: CGPoint(x: rect.minX + horizontalInset, y: rect.maxY + markGap),
-                end: CGPoint(x: rect.minX + horizontalInset, y: rect.maxY + markGap + markLength)
+                start: CGPoint(x: rect.minX + trimCornerInset, y: rect.maxY + markGap),
+                end: CGPoint(x: rect.minX + trimCornerInset, y: rect.maxY + markGap + markLength)
             ),
             CutGuideSegment(
-                start: CGPoint(x: rect.maxX + markGap, y: rect.maxY - verticalInset),
-                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.maxY - verticalInset)
+                start: CGPoint(x: rect.maxX + markGap, y: rect.maxY - trimCornerInset),
+                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.maxY - trimCornerInset)
             ),
             CutGuideSegment(
-                start: CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY + markGap),
-                end: CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY + markGap + markLength)
+                start: CGPoint(x: rect.maxX - trimCornerInset, y: rect.maxY + markGap),
+                end: CGPoint(x: rect.maxX - trimCornerInset, y: rect.maxY + markGap + markLength)
             ),
             CutGuideSegment(
-                start: CGPoint(x: rect.minX - markGap, y: rect.minY + verticalInset),
-                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.minY + verticalInset)
+                start: CGPoint(x: rect.minX - markGap, y: rect.minY + trimCornerInset),
+                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.minY + trimCornerInset)
             ),
             CutGuideSegment(
-                start: CGPoint(x: rect.minX + horizontalInset, y: rect.minY - markGap),
-                end: CGPoint(x: rect.minX + horizontalInset, y: rect.minY - markGap - markLength)
+                start: CGPoint(x: rect.minX + trimCornerInset, y: rect.minY - markGap),
+                end: CGPoint(x: rect.minX + trimCornerInset, y: rect.minY - markGap - markLength)
             ),
             CutGuideSegment(
-                start: CGPoint(x: rect.maxX + markGap, y: rect.minY + verticalInset),
-                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.minY + verticalInset)
+                start: CGPoint(x: rect.maxX + markGap, y: rect.minY + trimCornerInset),
+                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.minY + trimCornerInset)
             ),
             CutGuideSegment(
-                start: CGPoint(x: rect.maxX - horizontalInset, y: rect.minY - markGap),
-                end: CGPoint(x: rect.maxX - horizontalInset, y: rect.minY - markGap - markLength)
+                start: CGPoint(x: rect.maxX - trimCornerInset, y: rect.minY - markGap),
+                end: CGPoint(x: rect.maxX - trimCornerInset, y: rect.minY - markGap - markLength)
             )
         ]
+    }
+
+    static func roundedTrimCornerInset(for rect: CGRect) -> CGFloat {
+        max(10, min(16, rect.width * 0.075))
     }
 }

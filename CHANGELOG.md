@@ -14,7 +14,7 @@
 
 ### Changed
 
-- PDF cut guides now render outside the card frame so exported art stays clean.
+- PDF cut guides now render outside the card frame and align to the rounded trim edge instead of the inner frame.
 - Preview Sheets now uses an explicit filled treatment so it stays visible against the glass panel.
 - Deck workspace print controls now group preview/export actions together, and the redundant card-scale metric is gone.
 - Add Cards now opens as a dismissable popover instead of a blocking sheet.
