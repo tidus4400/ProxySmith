@@ -1,0 +1,525 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0BF1E987D91BDFF25D51CC0E /* ScryfallCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */; };
+		168F4351457A0C538DBC2F5E /* DeckWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 247D82C4D3C374AAEC73297E /* DeckWorkspaceView.swift */; };
+		18035E843409066E5CB3069A /* CardImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A19E95EF7F9FF5476706A2 /* CardImageRepository.swift */; };
+		5777484B59DE8EB6AA0BB157 /* ScryfallCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C51E70F6E39E8DD881F63C3 /* ScryfallCard.swift */; };
+		5ADD708BF03DD543FFFDAD85 /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F5C2EDFA318BFAD766D1BF /* Deck.swift */; };
+		655243FA03870EAFC25C3B1A /* AppServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C24F9A34CB41651D83366C /* AppServices.swift */; };
+		655AFBCC1755AE7008A3052A /* EmptyLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E33A36B03A1CB42C503E46 /* EmptyLibraryView.swift */; };
+		670A38BEB605B0CCB2B46597 /* ProxySmithApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E3402A49C7D140B66B5535 /* ProxySmithApp.swift */; };
+		729D7C3CD95AF2FF5869AAC1 /* GlassPanelModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC74DBF68BBEDEFA0356557 /* GlassPanelModifier.swift */; };
+		82C03E2D79E426B66C74DE0F /* ScryfallClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98E858B85237C53A708D1C68 /* ScryfallClient.swift */; };
+		897EB690AA0EF6173A077D13 /* PDFExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B51FDC9B30226E8C282EC6E3 /* PDFExportService.swift */; };
+		934B065525850DEE0E417F93 /* DeckExportSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B28B3F899183AE450E923F /* DeckExportSnapshot.swift */; };
+		93B84211924002CE1E8B4931 /* DeckCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301C8AAB6E80D4B4283F34F6 /* DeckCard.swift */; };
+		A3CBD0988DED91BD90A451C5 /* PrintLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423D49284BE74727D7EFE64B /* PrintLayoutTests.swift */; };
+		A9751252F07BC256900CEA42 /* PrintLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0910D068F678B0BC2D3EFB7 /* PrintLayout.swift */; };
+		ADE00BB51AEC7C8B26114B70 /* DeckSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */; };
+		BA111B187E2F172E0B26D72C /* CardSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFF5E731724C9919409110C /* CardSearchSheet.swift */; };
+		D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD831C6C3DA6A14B9135B71 /* ContentView.swift */; };
+		DA55102254A658852DB4B5DC /* AppBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305761C33A2039F87AE36282 /* AppBackgroundView.swift */; };
+		DD72405AC9271BF3CECA5F83 /* DeckCardRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		42075DE1B894A2B57C945D1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1384C1A24A596B257090A672 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 74F34C3DBEA09D2021A6BD70;
+			remoteInfo = ProxySmith;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05C24F9A34CB41651D83366C /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
+		05E33A36B03A1CB42C503E46 /* EmptyLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyLibraryView.swift; sourceTree = "<group>"; };
+		247D82C4D3C374AAEC73297E /* DeckWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckWorkspaceView.swift; sourceTree = "<group>"; };
+		2AFF5E731724C9919409110C /* CardSearchSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSearchSheet.swift; sourceTree = "<group>"; };
+		301C8AAB6E80D4B4283F34F6 /* DeckCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckCard.swift; sourceTree = "<group>"; };
+		305761C33A2039F87AE36282 /* AppBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBackgroundView.swift; sourceTree = "<group>"; };
+		423D49284BE74727D7EFE64B /* PrintLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintLayoutTests.swift; sourceTree = "<group>"; };
+		42E3402A49C7D140B66B5535 /* ProxySmithApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySmithApp.swift; sourceTree = "<group>"; };
+		45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckCardRowView.swift; sourceTree = "<group>"; };
+		48B28B3F899183AE450E923F /* DeckExportSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckExportSnapshot.swift; sourceTree = "<group>"; };
+		52259EF75343AF0E083351BC /* ProxySmith.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProxySmith.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallCardTests.swift; sourceTree = "<group>"; };
+		7CC74DBF68BBEDEFA0356557 /* GlassPanelModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassPanelModifier.swift; sourceTree = "<group>"; };
+		87A19E95EF7F9FF5476706A2 /* CardImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageRepository.swift; sourceTree = "<group>"; };
+		8C51E70F6E39E8DD881F63C3 /* ScryfallCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallCard.swift; sourceTree = "<group>"; };
+		98E858B85237C53A708D1C68 /* ScryfallClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallClient.swift; sourceTree = "<group>"; };
+		B2F5C2EDFA318BFAD766D1BF /* Deck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deck.swift; sourceTree = "<group>"; };
+		B51FDC9B30226E8C282EC6E3 /* PDFExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExportService.swift; sourceTree = "<group>"; };
+		B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckSidebarView.swift; sourceTree = "<group>"; };
+		D0910D068F678B0BC2D3EFB7 /* PrintLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintLayout.swift; sourceTree = "<group>"; };
+		DFD831C6C3DA6A14B9135B71 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F10E21A8A526FDE90521C966 /* ProxySmithTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxySmithTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		189F7A2423ABB5D6D6846103 = {
+			isa = PBXGroup;
+			children = (
+				FB410088A715EA6F068BAC1C /* ProxySmith */,
+				603AA718491F8D0BF3CD5DEB /* ProxySmithTests */,
+				77C514AE1F278466AD252F58 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2A3E8C4EC9F0C34715D32A73 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				D0910D068F678B0BC2D3EFB7 /* PrintLayout.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		603AA718491F8D0BF3CD5DEB /* ProxySmithTests */ = {
+			isa = PBXGroup;
+			children = (
+				423D49284BE74727D7EFE64B /* PrintLayoutTests.swift */,
+				7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */,
+			);
+			path = ProxySmithTests;
+			sourceTree = "<group>";
+		};
+		76B849E2C07E7F0DB30E127E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2AFF5E731724C9919409110C /* CardSearchSheet.swift */,
+				45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */,
+				B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */,
+				247D82C4D3C374AAEC73297E /* DeckWorkspaceView.swift */,
+				05E33A36B03A1CB42C503E46 /* EmptyLibraryView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		77C514AE1F278466AD252F58 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				52259EF75343AF0E083351BC /* ProxySmith.app */,
+				F10E21A8A526FDE90521C966 /* ProxySmithTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BE3028A6B31BE9108DAEC1E1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B2F5C2EDFA318BFAD766D1BF /* Deck.swift */,
+				301C8AAB6E80D4B4283F34F6 /* DeckCard.swift */,
+				48B28B3F899183AE450E923F /* DeckExportSnapshot.swift */,
+				8C51E70F6E39E8DD881F63C3 /* ScryfallCard.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D07D82D6BCA8179BA874308E /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				305761C33A2039F87AE36282 /* AppBackgroundView.swift */,
+				05C24F9A34CB41651D83366C /* AppServices.swift */,
+				7CC74DBF68BBEDEFA0356557 /* GlassPanelModifier.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		E5CAF28A67DB751988247AFF /* App */ = {
+			isa = PBXGroup;
+			children = (
+				DFD831C6C3DA6A14B9135B71 /* ContentView.swift */,
+				42E3402A49C7D140B66B5535 /* ProxySmithApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E926687A4D47442B886EEC7D /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				87A19E95EF7F9FF5476706A2 /* CardImageRepository.swift */,
+				B51FDC9B30226E8C282EC6E3 /* PDFExportService.swift */,
+				98E858B85237C53A708D1C68 /* ScryfallClient.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		FB410088A715EA6F068BAC1C /* ProxySmith */ = {
+			isa = PBXGroup;
+			children = (
+				E5CAF28A67DB751988247AFF /* App */,
+				BE3028A6B31BE9108DAEC1E1 /* Models */,
+				E926687A4D47442B886EEC7D /* Services */,
+				D07D82D6BCA8179BA874308E /* Support */,
+				2A3E8C4EC9F0C34715D32A73 /* Utilities */,
+				76B849E2C07E7F0DB30E127E /* Views */,
+			);
+			path = ProxySmith;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		74F34C3DBEA09D2021A6BD70 /* ProxySmith */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C689E336FA0C95660DA1212C /* Build configuration list for PBXNativeTarget "ProxySmith" */;
+			buildPhases = (
+				1F246151825BE1D0126DA64D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ProxySmith;
+			packageProductDependencies = (
+			);
+			productName = ProxySmith;
+			productReference = 52259EF75343AF0E083351BC /* ProxySmith.app */;
+			productType = "com.apple.product-type.application";
+		};
+		95CBBAE65B1595A79F3EECCB /* ProxySmithTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EA937C6E92B40D58361B54CC /* Build configuration list for PBXNativeTarget "ProxySmithTests" */;
+			buildPhases = (
+				5AF9CD693D544E8E3F92191E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3DD64989E3447F772930159E /* PBXTargetDependency */,
+			);
+			name = ProxySmithTests;
+			packageProductDependencies = (
+			);
+			productName = ProxySmithTests;
+			productReference = F10E21A8A526FDE90521C966 /* ProxySmithTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1384C1A24A596B257090A672 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					74F34C3DBEA09D2021A6BD70 = {
+						ProvisioningStyle = Automatic;
+					};
+					95CBBAE65B1595A79F3EECCB = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 8B866EE25ADE42D5ABB320AC /* Build configuration list for PBXProject "ProxySmith" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 189F7A2423ABB5D6D6846103;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 77C514AE1F278466AD252F58 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				74F34C3DBEA09D2021A6BD70 /* ProxySmith */,
+				95CBBAE65B1595A79F3EECCB /* ProxySmithTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1F246151825BE1D0126DA64D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA55102254A658852DB4B5DC /* AppBackgroundView.swift in Sources */,
+				655243FA03870EAFC25C3B1A /* AppServices.swift in Sources */,
+				18035E843409066E5CB3069A /* CardImageRepository.swift in Sources */,
+				BA111B187E2F172E0B26D72C /* CardSearchSheet.swift in Sources */,
+				D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */,
+				5ADD708BF03DD543FFFDAD85 /* Deck.swift in Sources */,
+				93B84211924002CE1E8B4931 /* DeckCard.swift in Sources */,
+				DD72405AC9271BF3CECA5F83 /* DeckCardRowView.swift in Sources */,
+				934B065525850DEE0E417F93 /* DeckExportSnapshot.swift in Sources */,
+				ADE00BB51AEC7C8B26114B70 /* DeckSidebarView.swift in Sources */,
+				168F4351457A0C538DBC2F5E /* DeckWorkspaceView.swift in Sources */,
+				655AFBCC1755AE7008A3052A /* EmptyLibraryView.swift in Sources */,
+				729D7C3CD95AF2FF5869AAC1 /* GlassPanelModifier.swift in Sources */,
+				897EB690AA0EF6173A077D13 /* PDFExportService.swift in Sources */,
+				A9751252F07BC256900CEA42 /* PrintLayout.swift in Sources */,
+				670A38BEB605B0CCB2B46597 /* ProxySmithApp.swift in Sources */,
+				5777484B59DE8EB6AA0BB157 /* ScryfallCard.swift in Sources */,
+				82C03E2D79E426B66C74DE0F /* ScryfallClient.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AF9CD693D544E8E3F92191E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3CBD0988DED91BD90A451C5 /* PrintLayoutTests.swift in Sources */,
+				0BF1E987D91BDFF25D51CC0E /* ScryfallCardTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3DD64989E3447F772930159E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 74F34C3DBEA09D2021A6BD70 /* ProxySmith */;
+			targetProxy = 42075DE1B894A2B57C945D1E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		14FF3404F4B22E5623B436E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = ProxySmith;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		4FD04BAC81961285CFD545EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tidus4400.ProxySmithTests;
+				PRODUCT_MODULE_NAME = ProxySmithTests;
+				PRODUCT_NAME = ProxySmithTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProxySmith.app/Contents/MacOS/ProxySmith";
+			};
+			name = Release;
+		};
+		8469D669A9107ADBA894E4D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = ProxySmith;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tidus4400.ProxySmith;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B054EC51EBAA8CD63E50D8BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = ProxySmith;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tidus4400.ProxySmith;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		BECBC96882A822A8C00E9DDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tidus4400.ProxySmithTests;
+				PRODUCT_MODULE_NAME = ProxySmithTests;
+				PRODUCT_NAME = ProxySmithTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProxySmith.app/Contents/MacOS/ProxySmith";
+			};
+			name = Debug;
+		};
+		D1FE4FAC422634D948062DED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = ProxySmith;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8B866EE25ADE42D5ABB320AC /* Build configuration list for PBXProject "ProxySmith" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1FE4FAC422634D948062DED /* Debug */,
+				14FF3404F4B22E5623B436E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C689E336FA0C95660DA1212C /* Build configuration list for PBXNativeTarget "ProxySmith" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B054EC51EBAA8CD63E50D8BF /* Debug */,
+				8469D669A9107ADBA894E4D7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EA937C6E92B40D58361B54CC /* Build configuration list for PBXNativeTarget "ProxySmithTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BECBC96882A822A8C00E9DDF /* Debug */,
+				4FD04BAC81961285CFD545EF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1384C1A24A596B257090A672 /* Project object */;
+}

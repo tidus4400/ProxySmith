@@ -1,0 +1,41 @@
+name: ProxySmith
+options:
+  bundleIdPrefix: com.tidus4400
+settings:
+  base:
+    PRODUCT_NAME: ProxySmith
+    SWIFT_VERSION: 6.0
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+    GENERATE_INFOPLIST_FILE: YES
+    MACOSX_DEPLOYMENT_TARGET: 26.0
+    CODE_SIGN_STYLE: Automatic
+targets:
+  ProxySmith:
+    type: application
+    platform: macOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ProxySmith
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidus4400.ProxySmith
+        INFOPLIST_KEY_CFBundleDisplayName: ProxySmith
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.graphics-design
+        INFOPLIST_KEY_NSHumanReadableCopyright: ""
+        ENABLE_PREVIEWS: YES
+    scheme:
+      testTargets:
+        - ProxySmithTests
+  ProxySmithTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ProxySmithTests
+    settings:
+      base:
+        PRODUCT_NAME: ProxySmithTests
+        PRODUCT_MODULE_NAME: ProxySmithTests
+    dependencies:
+      - target: ProxySmith

@@ -1,0 +1,85 @@
+# AI Context
+
+This file is the working map for future agents making changes in ProxySmith. Read this before editing the app.
+
+## Product Intent
+
+ProxySmith is a macOS-native deck-to-print workflow for Magic: The Gathering proxies.
+
+The intended flow is:
+
+1. Create a deck.
+2. Add cards from Scryfall.
+3. Tune print scale.
+4. Export A4 sheets as PDF for physical printing.
+
+The app should feel polished and Mac-native, not like a thin CRUD shell.
+
+## Non-Negotiables
+
+- Keep Scryfall traffic conservative.
+  API calls currently flow through `ScryfallClient` and `RequestThrottler`.
+- Preserve print accuracy.
+  `PrintLayout` owns the canonical A4 and MTG card sizing math.
+- Keep the app native-first.
+  Prefer SwiftUI, SwiftData, and Apple frameworks over extra dependencies.
+- Avoid replacing XcodeGen with hand-edited `.pbxproj` changes.
+  Update `project.yml`, then regenerate.
+
+## Repo Map
+
+- `project.yml`
+  Source of truth for the Xcode project.
+- `ProxySmith/App/ProxySmithApp.swift`
+  App bootstrap, scene configuration, SwiftData container.
+- `ProxySmith/App/ContentView.swift`
+  Root navigation and deck selection.
+- `ProxySmith/Models/Deck.swift`
+  Deck persistence model and deck-level helpers.
+- `ProxySmith/Models/DeckCard.swift`
+  Stored card data used for deck editing and export.
+- `ProxySmith/Models/ScryfallCard.swift`
+  API DTOs and image selection logic.
+- `ProxySmith/Services/ScryfallClient.swift`
+  Rate-limited Scryfall metadata access.
+- `ProxySmith/Services/CardImageRepository.swift`
+  Cached image fetcher used by export.
+- `ProxySmith/Services/PDFExportService.swift`
+  PDF generation and cut-guide drawing.
+- `ProxySmith/Utilities/PrintLayout.swift`
+  Canonical page/card sizing calculations.
+
+## Current UX Shape
+
+- Sidebar for deck library.
+- Main deck workspace with:
+  editable name
+  scale slider
+  add cards action
+  export action
+  deck list with quantity control
+- Search sheet for Scryfall-driven card lookup.
+
+## Known Constraints
+
+- Double-faced and special-layout cards currently use the first face image when root `image_uris` are absent.
+- Export currently renders the chosen face art with cut guides and a fixed 3x3 grid.
+- Search currently uses Scryfall search syntax directly rather than a curated autocomplete domain model.
+
+## Likely Next Features
+
+- Better card search filtering and sorting
+- Deck import from pasted lists
+- Duplicate card collapsing and batch quantity editing
+- Export preview before saving
+- More print presets and paper sizes
+- Optional bleed/crop controls
+
+## Workflow Rules For Future Agents
+
+- Use `rg` for searches.
+- Use `apply_patch` for manual edits.
+- Regenerate the Xcode project after `project.yml` changes.
+- Run `xcodebuild -scheme ProxySmith -destination 'platform=macOS' build` before handing off.
+- If you change print math or Scryfall behavior, update this file.
+
