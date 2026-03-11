@@ -17,7 +17,6 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     headerPanel
                     numberingPanel
-                    changelogPanel
                 }
                 .padding(24)
             }
@@ -103,20 +102,6 @@ struct SettingsView: View {
             .accessibilityIdentifier("reset-deck-counter-button")
         }
         .glassPanel(cornerRadius: 32, padding: 24)
-    }
-
-    private var changelogPanel: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Delivery Rule")
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-
-            Text("Every commit should also update CHANGELOG.md. The agent context file now treats that as a workflow requirement, not an optional note.")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.74))
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassPanel(cornerRadius: 28, padding: 20)
     }
 
     private var effectiveNextGlobalDeckNumber: Int {
