@@ -24,9 +24,9 @@ struct EmptyLibraryView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(Color(red: 0.95, green: 0.55, blue: 0.28))
+            .accessibilityIdentifier("empty-state-new-deck-button")
         }
         .glassPanel(cornerRadius: 36, padding: 32)
         .padding(32)
     }
 }
-

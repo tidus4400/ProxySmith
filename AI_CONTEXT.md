@@ -30,10 +30,16 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 
 - `project.yml`
   Source of truth for the Xcode project.
+- `CHANGELOG.md`
+  Must be updated for every commit-worthy change before committing.
 - `ProxySmith/App/ProxySmithApp.swift`
   App bootstrap, scene configuration, SwiftData container.
 - `ProxySmith/App/ContentView.swift`
   Root navigation and deck selection.
+- `ProxySmith/Support/AppPreferences.swift`
+  Persistent app-level preferences such as deck-numbering behavior.
+- `ProxySmith/Utilities/DeckNameGenerator.swift`
+  Canonical logic for untitled deck numbering and sequence handling.
 - `ProxySmith/Models/Deck.swift`
   Deck persistence model and deck-level helpers.
 - `ProxySmith/Models/DeckCard.swift`
@@ -58,6 +64,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   add cards action
   export action
   deck list with quantity control
+- Settings window for app-level options such as deck numbering.
 - Search sheet for Scryfall-driven card lookup.
 
 ## Known Constraints
@@ -80,6 +87,6 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Use `rg` for searches.
 - Use `apply_patch` for manual edits.
 - Regenerate the Xcode project after `project.yml` changes.
-- Run `xcodebuild -scheme ProxySmith -destination 'platform=macOS' build` before handing off.
+- Run `xcodebuild -scheme ProxySmith -destination 'platform=macOS' test` before handing off when changes affect app behavior, persistence, or UI flows.
+- Update `CHANGELOG.md` before every commit. Treat it as part of the deliverable, not optional documentation.
 - If you change print math or Scryfall behavior, update this file.
-

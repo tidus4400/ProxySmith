@@ -50,6 +50,17 @@
                ReferencedContainer = "container:ProxySmith.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6F9E517A3D65B9FBFC611581"
+               BuildableName = "ProxySmithUITests.xctest"
+               BlueprintName = "ProxySmithUITests"
+               ReferencedContainer = "container:ProxySmith.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
