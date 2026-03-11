@@ -3,6 +3,8 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.openSettings) private var openSettings
+    @Environment(AppPreferences.self) private var appPreferences
 
     @Query(sort: [SortDescriptor(\Deck.updatedAt, order: .reverse)])
     private var decks: [Deck]
@@ -15,7 +17,8 @@ struct ContentView: View {
                 decks: decks,
                 selectedDeck: $selectedDeck,
                 onCreateDeck: createDeck,
-                onDeleteSelectedDeck: deleteSelectedDeck
+                onDeleteSelectedDeck: deleteSelectedDeck,
+                onOpenSettings: { openSettings() }
             )
             .navigationSplitViewColumnWidth(min: 280, ideal: 320)
         } detail: {
@@ -34,11 +37,18 @@ struct ContentView: View {
                 Button(action: createDeck) {
                     Label("New Deck", systemImage: "plus")
                 }
+                .accessibilityIdentifier("toolbar-new-deck-button")
 
                 Button(role: .destructive, action: deleteSelectedDeck) {
                     Label("Delete Deck", systemImage: "trash")
                 }
+                .accessibilityIdentifier("toolbar-delete-deck-button")
                 .disabled(selectedDeck == nil)
+
+                Button(action: { openSettings() }) {
+                    Label("Options", systemImage: "gearshape")
+                }
+                .accessibilityIdentifier("toolbar-open-settings-button")
             }
         }
         .onAppear {
@@ -56,9 +66,20 @@ struct ContentView: View {
     }
 
     private func createDeck() {
-        let deck = Deck(name: nextDeckName())
+        let generatedName = DeckNameGenerator.nextName(
+            existingNames: decks.map(\.name),
+            globalNumberingEnabled: appPreferences.globalDeckNumberingEnabled,
+            storedNextGlobalDeckNumber: appPreferences.nextGlobalDeckNumber
+        )
+
+        let deck = Deck(name: generatedName.name)
         modelContext.insert(deck)
         try? modelContext.save()
+
+        if appPreferences.globalDeckNumberingEnabled {
+            appPreferences.nextGlobalDeckNumber = generatedName.updatedNextGlobalDeckNumber
+        }
+
         selectedDeck = deck
     }
 
@@ -68,18 +89,4 @@ struct ContentView: View {
         try? modelContext.save()
         self.selectedDeck = decks.first(where: { $0.id != selectedDeck.id })
     }
-
-    private func nextDeckName() -> String {
-        let baseName = "Untitled Deck"
-        let existingNames = Set(decks.map(\.name))
-        guard existingNames.contains(baseName) else { return baseName }
-
-        var index = 2
-        while existingNames.contains("\(baseName) \(index)") {
-            index += 1
-        }
-
-        return "\(baseName) \(index)"
-    }
 }
-

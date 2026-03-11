@@ -27,6 +27,7 @@ targets:
     scheme:
       testTargets:
         - ProxySmithTests
+        - ProxySmithUITests
   ProxySmithTests:
     type: bundle.unit-test
     platform: macOS
@@ -37,5 +38,19 @@ targets:
       base:
         PRODUCT_NAME: ProxySmithTests
         PRODUCT_MODULE_NAME: ProxySmithTests
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidus4400.ProxySmithTests
+    dependencies:
+      - target: ProxySmith
+  ProxySmithUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ProxySmithUITests
+    settings:
+      base:
+        PRODUCT_NAME: ProxySmithUITests
+        PRODUCT_MODULE_NAME: ProxySmithUITests
+        PRODUCT_BUNDLE_IDENTIFIER: com.tidus4400.ProxySmithUITests
     dependencies:
       - target: ProxySmith

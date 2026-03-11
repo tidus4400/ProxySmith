@@ -5,6 +5,7 @@ struct DeckSidebarView: View {
     @Binding var selectedDeck: Deck?
     let onCreateDeck: () -> Void
     let onDeleteSelectedDeck: () -> Void
+    let onOpenSettings: () -> Void
 
     var body: some View {
         ZStack {
@@ -39,13 +40,22 @@ struct DeckSidebarView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(Color(red: 0.33, green: 0.76, blue: 0.73))
+                    .accessibilityIdentifier("sidebar-new-deck-button")
 
                     Button(role: .destructive, action: onDeleteSelectedDeck) {
                         Image(systemName: "trash")
                             .frame(width: 32)
                     }
                     .buttonStyle(.bordered)
+                    .accessibilityIdentifier("sidebar-delete-deck-button")
                     .disabled(selectedDeck == nil)
+
+                    Button(action: onOpenSettings) {
+                        Image(systemName: "gearshape")
+                            .frame(width: 32)
+                    }
+                    .buttonStyle(.bordered)
+                    .accessibilityIdentifier("sidebar-open-settings-button")
                 }
             }
             .padding(24)
@@ -72,4 +82,3 @@ private struct DeckSidebarRow: View {
         .padding(.vertical, 6)
     }
 }
-

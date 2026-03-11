@@ -51,6 +51,7 @@ struct DeckWorkspaceView: View {
                     .textFieldStyle(.plain)
                     .font(.system(size: 36, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
+                    .accessibilityIdentifier("deck-name-field")
 
                 Text("Search Scryfall, collect the exact cards you want, then export print-ready A4 proxy sheets.")
                     .font(.system(size: 15, weight: .medium, design: .rounded))
@@ -216,4 +217,3 @@ struct DeckWorkspaceView: View {
         isExporting = false
     }
 }
-
