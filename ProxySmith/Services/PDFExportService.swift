@@ -3,7 +3,7 @@ import CoreText
 import Foundation
 import ImageIO
 
-enum PDFExportError: LocalizedError {
+enum PDFExportError: Error, Equatable, LocalizedError {
     case noCards
     case couldNotCreateFile
 
@@ -17,8 +17,18 @@ enum PDFExportError: LocalizedError {
     }
 }
 
+struct CutGuideSegment: Equatable {
+    let start: CGPoint
+    let end: CGPoint
+}
+
 struct PDFExportService {
     func export(snapshot: DeckExportSnapshot, to url: URL, imageRepository: CardImageRepository) async throws {
+        let data = try await render(snapshot: snapshot, imageRepository: imageRepository)
+        try data.write(to: url, options: .atomic)
+    }
+
+    func render(snapshot: DeckExportSnapshot, imageRepository: CardImageRepository) async throws -> Data {
         let cards = snapshot.flattenedCards
         guard !cards.isEmpty else {
             throw PDFExportError.noCards
@@ -27,13 +37,32 @@ struct PDFExportService {
         let uniqueImageURLs = Array(Set(cards.compactMap(\.imageURL)))
         let imageData = try await imageRepository.prefetchData(for: uniqueImageURLs)
 
+        let data = NSMutableData()
         var mediaBox = CGRect(origin: .zero, size: PrintLayout.a4PageSize)
-        guard let consumer = CGDataConsumer(url: url as CFURL),
+        guard let consumer = CGDataConsumer(data: data as CFMutableData),
               let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
             throw PDFExportError.couldNotCreateFile
         }
 
-        let frames = PrintLayout.cardFrames(scalePercent: snapshot.scalePercent)
+        renderPages(
+            cards: cards,
+            imageData: imageData,
+            scalePercent: snapshot.scalePercent,
+            mediaBox: mediaBox,
+            context: context
+        )
+
+        return data as Data
+    }
+
+    private func renderPages(
+        cards: [DeckExportCard],
+        imageData: [URL: Data],
+        scalePercent: Double,
+        mediaBox: CGRect,
+        context: CGContext
+    ) {
+        let frames = PrintLayout.cardFrames(scalePercent: scalePercent)
         let pages = stride(from: 0, to: cards.count, by: PrintLayout.cardsPerPage)
 
         for pageStart in pages {
@@ -95,25 +124,53 @@ struct PDFExportService {
     private func drawGuides(for rect: CGRect, in context: CGContext) {
         context.setStrokeColor(CGColor(gray: 0.28, alpha: 0.65))
         context.setLineWidth(0.4)
-        context.stroke(rect)
 
-        let markLength: CGFloat = 9
-        let horizontalInset = max(6, min(12, rect.width * 0.06))
-        let verticalInset = max(6, min(12, rect.height * 0.04))
-
-        func stroke(_ start: CGPoint, _ end: CGPoint) {
+        for segment in Self.cutGuideSegments(for: rect) {
+            let start = segment.start
+            let end = segment.end
             context.move(to: start)
             context.addLine(to: end)
             context.strokePath()
         }
+    }
 
-        stroke(CGPoint(x: rect.minX, y: rect.maxY - verticalInset), CGPoint(x: rect.minX - markLength, y: rect.maxY - verticalInset))
-        stroke(CGPoint(x: rect.minX + horizontalInset, y: rect.maxY), CGPoint(x: rect.minX + horizontalInset, y: rect.maxY + markLength))
-        stroke(CGPoint(x: rect.maxX, y: rect.maxY - verticalInset), CGPoint(x: rect.maxX + markLength, y: rect.maxY - verticalInset))
-        stroke(CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY), CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY + markLength))
-        stroke(CGPoint(x: rect.minX, y: rect.minY + verticalInset), CGPoint(x: rect.minX - markLength, y: rect.minY + verticalInset))
-        stroke(CGPoint(x: rect.minX + horizontalInset, y: rect.minY), CGPoint(x: rect.minX + horizontalInset, y: rect.minY - markLength))
-        stroke(CGPoint(x: rect.maxX, y: rect.minY + verticalInset), CGPoint(x: rect.maxX + markLength, y: rect.minY + verticalInset))
-        stroke(CGPoint(x: rect.maxX - horizontalInset, y: rect.minY), CGPoint(x: rect.maxX - horizontalInset, y: rect.minY - markLength))
+    static func cutGuideSegments(for rect: CGRect) -> [CutGuideSegment] {
+        let markLength: CGFloat = 9
+        let markGap: CGFloat = 2
+
+        return [
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX - markGap, y: rect.maxY),
+                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.maxY)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX, y: rect.maxY + markGap),
+                end: CGPoint(x: rect.minX, y: rect.maxY + markGap + markLength)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX + markGap, y: rect.maxY),
+                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.maxY)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX, y: rect.maxY + markGap),
+                end: CGPoint(x: rect.maxX, y: rect.maxY + markGap + markLength)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX - markGap, y: rect.minY),
+                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.minY)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX, y: rect.minY - markGap),
+                end: CGPoint(x: rect.minX, y: rect.minY - markGap - markLength)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX + markGap, y: rect.minY),
+                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.minY)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX, y: rect.minY - markGap),
+                end: CGPoint(x: rect.maxX, y: rect.minY - markGap - markLength)
+            )
+        ]
     }
 }

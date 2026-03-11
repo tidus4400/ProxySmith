@@ -52,6 +52,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            seedUITestDeckIfNeeded()
             if selectedDeck == nil {
                 selectedDeck = decks.first
             }
@@ -88,5 +89,14 @@ struct ContentView: View {
         modelContext.delete(selectedDeck)
         try? modelContext.save()
         self.selectedDeck = decks.first(where: { $0.id != selectedDeck.id })
+    }
+
+    private func seedUITestDeckIfNeeded() {
+        guard LaunchConfiguration.shouldSeedSampleDeck, decks.isEmpty else { return }
+
+        let deck = LaunchConfiguration.makeUITestSampleDeck()
+        modelContext.insert(deck)
+        try? modelContext.save()
+        selectedDeck = deck
     }
 }

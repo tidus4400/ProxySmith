@@ -9,6 +9,7 @@ struct DeckWorkspaceView: View {
     @Bindable var deck: Deck
 
     @State private var isShowingSearchSheet = false
+    @State private var isShowingPreviewSheet = false
     @State private var isExporting = false
     @State private var exportErrorMessage: String?
 
@@ -26,8 +27,12 @@ struct DeckWorkspaceView: View {
             .padding(28)
         }
         .background(AppBackgroundView())
-        .sheet(isPresented: $isShowingSearchSheet) {
-            CardSearchSheet(deck: deck)
+        .sheet(isPresented: $isShowingPreviewSheet) {
+            PDFPreviewSheet(
+                snapshot: deck.exportSnapshot,
+                pdfExportService: services.pdfExportService,
+                imageRepository: services.imageRepository
+            )
         }
         .alert("Export Failed", isPresented: Binding(
             get: { exportErrorMessage != nil },
@@ -58,30 +63,13 @@ struct DeckWorkspaceView: View {
                     .foregroundStyle(.white.opacity(0.76))
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                HStack(spacing: 12) {
-                    actionButton(
-                        title: "Add Cards",
-                        systemImage: "plus.viewfinder",
-                        tint: Color(red: 0.33, green: 0.76, blue: 0.73)
-                    ) {
-                        isShowingSearchSheet = true
-                    }
-
-                    actionButton(
-                        title: isExporting ? "Exporting..." : "Export Print Sheets",
-                        systemImage: "printer.fill",
-                        tint: Color(red: 0.95, green: 0.55, blue: 0.28),
-                        action: { Task { await exportDeck() } }
-                    )
-                    .disabled(deck.cards.isEmpty || isExporting)
-                }
+                addCardsButton
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 18) {
                 metricRow(title: "Cards", value: "\(deck.totalCardCount)")
                 metricRow(title: "Pages", value: "\(PrintLayout.pageCount(forCardCount: deck.totalCardCount))")
-                metricRow(title: "Card Scale", value: "\(Int(deck.scalePercent))%")
 
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {
@@ -98,6 +86,42 @@ struct DeckWorkspaceView: View {
                     Text("100% matches real MTG card size. Drop to 90% for sleeve inserts with a backing card.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                }
+
+                VStack(spacing: 10) {
+                    Button {
+                        isShowingPreviewSheet = true
+                    } label: {
+                        buttonLabel(title: "Preview Sheets", systemImage: "doc.text.magnifyingglass")
+                            .frame(maxWidth: .infinity)
+                            .foregroundStyle(.white)
+                            .background {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(Color(red: 0.22, green: 0.31, blue: 0.45))
+                            }
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(.white.opacity(0.18), lineWidth: 1)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(deck.cards.isEmpty || isExporting)
+                    .opacity(deck.cards.isEmpty || isExporting ? 0.55 : 1)
+                    .accessibilityIdentifier("deck-preview-sheets-button")
+
+                    Button {
+                        Task { await exportDeck() }
+                    } label: {
+                        buttonLabel(
+                            title: isExporting ? "Exporting..." : "Export Print Sheets",
+                            systemImage: "printer.fill"
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color(red: 0.95, green: 0.55, blue: 0.28))
+                    .disabled(deck.cards.isEmpty || isExporting)
+                    .accessibilityIdentifier("deck-export-sheets-button")
                 }
             }
             .frame(width: 320, alignment: .leading)
@@ -156,20 +180,24 @@ struct DeckWorkspaceView: View {
         .glassPanel(cornerRadius: 34, padding: 24)
     }
 
-    @ViewBuilder
-    private func actionButton(
-        title: String,
-        systemImage: String,
-        tint: Color,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            Label(title, systemImage: systemImage)
-                .padding(.horizontal, 18)
-                .padding(.vertical, 10)
+    private var addCardsButton: some View {
+        Button {
+            isShowingSearchSheet = true
+        } label: {
+            buttonLabel(title: "Add Cards", systemImage: "plus.viewfinder")
         }
         .buttonStyle(.borderedProminent)
-        .tint(tint)
+        .tint(Color(red: 0.33, green: 0.76, blue: 0.73))
+        .accessibilityIdentifier("deck-add-cards-button")
+        .popover(isPresented: $isShowingSearchSheet, arrowEdge: .top) {
+            CardSearchSheet(deck: deck)
+        }
+    }
+
+    private func buttonLabel(title: String, systemImage: String) -> some View {
+        Label(title, systemImage: systemImage)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 10)
     }
 
     private func metricRow(title: String, value: String) -> some View {

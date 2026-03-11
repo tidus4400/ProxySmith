@@ -27,13 +27,16 @@
 		93B84211924002CE1E8B4931 /* DeckCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301C8AAB6E80D4B4283F34F6 /* DeckCard.swift */; };
 		A3CBD0988DED91BD90A451C5 /* PrintLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423D49284BE74727D7EFE64B /* PrintLayoutTests.swift */; };
 		A9751252F07BC256900CEA42 /* PrintLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0910D068F678B0BC2D3EFB7 /* PrintLayout.swift */; };
+		AD5041011238BCEAA0E9168E /* PDFExportServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C9796C8F07C94D7E9975901 /* PDFExportServiceTests.swift */; };
 		ADE00BB51AEC7C8B26114B70 /* DeckSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */; };
 		B2D97D2DC05A9454ADEA47FD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D11EC9FC3D3369C0E0BB53 /* SettingsView.swift */; };
 		BA111B187E2F172E0B26D72C /* CardSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFF5E731724C9919409110C /* CardSearchSheet.swift */; };
 		D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD831C6C3DA6A14B9135B71 /* ContentView.swift */; };
 		DA55102254A658852DB4B5DC /* AppBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305761C33A2039F87AE36282 /* AppBackgroundView.swift */; };
 		DD72405AC9271BF3CECA5F83 /* DeckCardRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */; };
+		E444BBC510DAC0E52F7AB83E /* LaunchConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */; };
 		E48ADBCEA0F5985DEFE25509 /* DeckNameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A974C934F19193507B5CEDD4 /* DeckNameGenerator.swift */; };
+		F5FC75D12779C1ED7070D35E /* PDFPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93E9615A3B728E2DDE3E66B /* PDFPreviewSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +59,7 @@
 /* Begin PBXFileReference section */
 		05C24F9A34CB41651D83366C /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
 		05E33A36B03A1CB42C503E46 /* EmptyLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyLibraryView.swift; sourceTree = "<group>"; };
+		0C9796C8F07C94D7E9975901 /* PDFExportServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExportServiceTests.swift; sourceTree = "<group>"; };
 		1E01143AB4CF2C273A880D60 /* DeckNameGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckNameGeneratorTests.swift; sourceTree = "<group>"; };
 		22D11EC9FC3D3369C0E0BB53 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		247D82C4D3C374AAEC73297E /* DeckWorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckWorkspaceView.swift; sourceTree = "<group>"; };
@@ -69,6 +73,7 @@
 		48B28B3F899183AE450E923F /* DeckExportSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckExportSnapshot.swift; sourceTree = "<group>"; };
 		52259EF75343AF0E083351BC /* ProxySmith.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProxySmith.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		698F56B7EF36340DE4E154D0 /* ProxySmithUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySmithUITests.swift; sourceTree = "<group>"; };
+		735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchConfigurationTests.swift; sourceTree = "<group>"; };
 		77C1B911A73AF419F1753102 /* LaunchConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchConfiguration.swift; sourceTree = "<group>"; };
 		7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallCardTests.swift; sourceTree = "<group>"; };
 		7BB9CFD42CE709F6CB09C2A8 /* ProxySmithUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxySmithUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +81,7 @@
 		87A19E95EF7F9FF5476706A2 /* CardImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageRepository.swift; sourceTree = "<group>"; };
 		8C51E70F6E39E8DD881F63C3 /* ScryfallCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallCard.swift; sourceTree = "<group>"; };
 		98E858B85237C53A708D1C68 /* ScryfallClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallClient.swift; sourceTree = "<group>"; };
+		A93E9615A3B728E2DDE3E66B /* PDFPreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPreviewSheet.swift; sourceTree = "<group>"; };
 		A974C934F19193507B5CEDD4 /* DeckNameGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckNameGenerator.swift; sourceTree = "<group>"; };
 		B2F5C2EDFA318BFAD766D1BF /* Deck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deck.swift; sourceTree = "<group>"; };
 		B51FDC9B30226E8C282EC6E3 /* PDFExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExportService.swift; sourceTree = "<group>"; };
@@ -111,6 +117,8 @@
 			children = (
 				D5E6966FEFAAF53F8E782878 /* AppPreferencesTests.swift */,
 				1E01143AB4CF2C273A880D60 /* DeckNameGeneratorTests.swift */,
+				735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */,
+				0C9796C8F07C94D7E9975901 /* PDFExportServiceTests.swift */,
 				423D49284BE74727D7EFE64B /* PrintLayoutTests.swift */,
 				7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */,
 			);
@@ -133,6 +141,7 @@
 				B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */,
 				247D82C4D3C374AAEC73297E /* DeckWorkspaceView.swift */,
 				05E33A36B03A1CB42C503E46 /* EmptyLibraryView.swift */,
+				A93E9615A3B728E2DDE3E66B /* PDFPreviewSheet.swift */,
 				22D11EC9FC3D3369C0E0BB53 /* SettingsView.swift */,
 			);
 			path = Views;
@@ -266,7 +275,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2630;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					6F9E517A3D65B9FBFC611581 = {
 						ProvisioningStyle = Automatic;
@@ -323,6 +332,7 @@
 				729D7C3CD95AF2FF5869AAC1 /* GlassPanelModifier.swift in Sources */,
 				3C1FBA957A0872B63AD57631 /* LaunchConfiguration.swift in Sources */,
 				897EB690AA0EF6173A077D13 /* PDFExportService.swift in Sources */,
+				F5FC75D12779C1ED7070D35E /* PDFPreviewSheet.swift in Sources */,
 				A9751252F07BC256900CEA42 /* PrintLayout.swift in Sources */,
 				670A38BEB605B0CCB2B46597 /* ProxySmithApp.swift in Sources */,
 				5777484B59DE8EB6AA0BB157 /* ScryfallCard.swift in Sources */,
@@ -337,6 +347,8 @@
 			files = (
 				2A952F523FD550171416B41F /* AppPreferencesTests.swift in Sources */,
 				7790A5DF4A60715900B0FA0C /* DeckNameGeneratorTests.swift in Sources */,
+				E444BBC510DAC0E52F7AB83E /* LaunchConfigurationTests.swift in Sources */,
+				AD5041011238BCEAA0E9168E /* PDFExportServiceTests.swift in Sources */,
 				A3CBD0988DED91BD90A451C5 /* PrintLayoutTests.swift in Sources */,
 				0BF1E987D91BDFF25D51CC0E /* ScryfallCardTests.swift in Sources */,
 			);
@@ -370,7 +382,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -403,11 +414,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -423,7 +432,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = ProxySmith;
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 6.0;
@@ -435,7 +443,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -455,7 +462,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -475,7 +481,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -495,7 +500,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ProxySmith;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
@@ -515,7 +519,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ProxySmith;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
@@ -535,7 +538,6 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -554,7 +556,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -587,11 +588,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -614,7 +613,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = ProxySmith;
 				SDKROOT = macosx;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 6.0;

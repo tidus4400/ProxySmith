@@ -40,6 +40,7 @@ struct CardSearchSheet: View {
                             .textFieldStyle(.plain)
                             .font(.system(size: 18, weight: .medium, design: .rounded))
                             .foregroundStyle(.white)
+                            .accessibilityIdentifier("card-search-field")
 
                         if isSearching {
                             ProgressView()
@@ -91,6 +92,7 @@ struct CardSearchSheet: View {
                     Button("Close") {
                         dismiss()
                     }
+                    .accessibilityIdentifier("card-search-close-button")
                 }
             }
         }
