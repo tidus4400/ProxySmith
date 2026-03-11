@@ -61,8 +61,8 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Main deck workspace with:
   editable name
   scale slider
-  add cards action
-  export action
+  add-cards popover
+  preview and export actions
   deck list with quantity control
 - Settings window for app-level options such as deck numbering.
 - Search sheet for Scryfall-driven card lookup.
@@ -72,13 +72,13 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Double-faced and special-layout cards currently use the first face image when root `image_uris` are absent.
 - Export currently renders the chosen face art with cut guides and a fixed 3x3 grid.
 - Search currently uses Scryfall search syntax directly rather than a curated autocomplete domain model.
+- PDF preview now renders from the same in-memory export pipeline as saved files, so preview and export should stay visually aligned.
 
 ## Likely Next Features
 
 - Better card search filtering and sorting
 - Deck import from pasted lists
 - Duplicate card collapsing and batch quantity editing
-- Export preview before saving
 - More print presets and paper sizes
 - Optional bleed/crop controls
 

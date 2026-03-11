@@ -3,7 +3,7 @@ import CoreText
 import Foundation
 import ImageIO
 
-enum PDFExportError: LocalizedError {
+enum PDFExportError: Error, Equatable, LocalizedError {
     case noCards
     case couldNotCreateFile
 
@@ -19,6 +19,11 @@ enum PDFExportError: LocalizedError {
 
 struct PDFExportService {
     func export(snapshot: DeckExportSnapshot, to url: URL, imageRepository: CardImageRepository) async throws {
+        let data = try await render(snapshot: snapshot, imageRepository: imageRepository)
+        try data.write(to: url, options: .atomic)
+    }
+
+    func render(snapshot: DeckExportSnapshot, imageRepository: CardImageRepository) async throws -> Data {
         let cards = snapshot.flattenedCards
         guard !cards.isEmpty else {
             throw PDFExportError.noCards
@@ -27,13 +32,32 @@ struct PDFExportService {
         let uniqueImageURLs = Array(Set(cards.compactMap(\.imageURL)))
         let imageData = try await imageRepository.prefetchData(for: uniqueImageURLs)
 
+        let data = NSMutableData()
         var mediaBox = CGRect(origin: .zero, size: PrintLayout.a4PageSize)
-        guard let consumer = CGDataConsumer(url: url as CFURL),
+        guard let consumer = CGDataConsumer(data: data as CFMutableData),
               let context = CGContext(consumer: consumer, mediaBox: &mediaBox, nil) else {
             throw PDFExportError.couldNotCreateFile
         }
 
-        let frames = PrintLayout.cardFrames(scalePercent: snapshot.scalePercent)
+        renderPages(
+            cards: cards,
+            imageData: imageData,
+            scalePercent: snapshot.scalePercent,
+            mediaBox: mediaBox,
+            context: context
+        )
+
+        return data as Data
+    }
+
+    private func renderPages(
+        cards: [DeckExportCard],
+        imageData: [URL: Data],
+        scalePercent: Double,
+        mediaBox: CGRect,
+        context: CGContext
+    ) {
+        let frames = PrintLayout.cardFrames(scalePercent: scalePercent)
         let pages = stride(from: 0, to: cards.count, by: PrintLayout.cardsPerPage)
 
         for pageStart in pages {

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct DeckCardRowView: View {
+    private let cardCornerRadius: CGFloat = 6
+
     @Bindable var card: DeckCard
 
     let onDelete: () -> Void
@@ -20,9 +22,9 @@ struct DeckCardRowView: View {
                     }
             }
             .frame(width: 84, height: 116)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
             .overlay {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
                     .stroke(.white.opacity(0.16), lineWidth: 1)
             }
 
@@ -51,19 +53,29 @@ struct DeckCardRowView: View {
 
             Spacer()
 
-            Stepper(value: Binding(
-                get: { card.quantity },
-                set: { newValue in
-                    card.quantity = max(1, newValue)
-                    onChange()
-                }
-            ), in: 1 ... 99) {
-                Text("\(card.quantity)x")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+            VStack(alignment: .trailing, spacing: 10) {
+                Text("Qty \(card.quantity)x")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
-                    .frame(minWidth: 44)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule(style: .continuous)
+                            .fill(.white.opacity(0.12))
+                    )
+                    .accessibilityIdentifier("deck-card-quantity-badge")
+
+                Stepper(value: Binding(
+                    get: { card.quantity },
+                    set: { newValue in
+                        card.quantity = max(1, newValue)
+                        onChange()
+                    }
+                ), in: 1 ... 99) {
+                    Text("Quantity")
+                }
+                .labelsHidden()
             }
-            .labelsHidden()
             .frame(width: 110)
 
             Button(role: .destructive, action: onDelete) {
@@ -75,4 +87,3 @@ struct DeckCardRowView: View {
         .glassPanel(cornerRadius: 26, padding: 16)
     }
 }
-

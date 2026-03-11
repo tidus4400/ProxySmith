@@ -1,3 +1,4 @@
+import CoreGraphics
 import XCTest
 
 final class ProxySmithUITests: XCTestCase {
@@ -88,6 +89,33 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testAddCardsPopoverDismissesOnOutsideClick() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let newDeckButton = window.buttons["sidebar-new-deck-button"]
+        XCTAssertTrue(newDeckButton.waitForExistence(timeout: 5))
+        newDeckButton.click()
+
+        let addCardsButton = window.buttons["deck-add-cards-button"]
+        XCTAssertTrue(addCardsButton.waitForExistence(timeout: 5))
+        addCardsButton.click()
+
+        let searchField = app.textFields["card-search-field"]
+        XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+
+        let outsideClickTarget = window.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.20))
+        outsideClickTarget.click()
+
+        XCTAssertTrue(waitForNonExistence(of: searchField))
+    }
+
+    @MainActor
     private func makeApp() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
@@ -126,4 +154,13 @@ private func waitForExistence(
     timeout: TimeInterval = 5
 ) -> Bool {
     element.waitForExistence(timeout: timeout)
+}
+
+private func waitForNonExistence(
+    of element: XCUIElement,
+    timeout: TimeInterval = 5
+) -> Bool {
+    let predicate = NSPredicate(format: "exists == false")
+    let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
+    return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
 }
