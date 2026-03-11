@@ -17,6 +17,11 @@ enum PDFExportError: Error, Equatable, LocalizedError {
     }
 }
 
+struct CutGuideSegment: Equatable {
+    let start: CGPoint
+    let end: CGPoint
+}
+
 struct PDFExportService {
     func export(snapshot: DeckExportSnapshot, to url: URL, imageRepository: CardImageRepository) async throws {
         let data = try await render(snapshot: snapshot, imageRepository: imageRepository)
@@ -119,25 +124,55 @@ struct PDFExportService {
     private func drawGuides(for rect: CGRect, in context: CGContext) {
         context.setStrokeColor(CGColor(gray: 0.28, alpha: 0.65))
         context.setLineWidth(0.4)
-        context.stroke(rect)
 
-        let markLength: CGFloat = 9
-        let horizontalInset = max(6, min(12, rect.width * 0.06))
-        let verticalInset = max(6, min(12, rect.height * 0.04))
-
-        func stroke(_ start: CGPoint, _ end: CGPoint) {
+        for segment in Self.cutGuideSegments(for: rect) {
+            let start = segment.start
+            let end = segment.end
             context.move(to: start)
             context.addLine(to: end)
             context.strokePath()
         }
+    }
 
-        stroke(CGPoint(x: rect.minX, y: rect.maxY - verticalInset), CGPoint(x: rect.minX - markLength, y: rect.maxY - verticalInset))
-        stroke(CGPoint(x: rect.minX + horizontalInset, y: rect.maxY), CGPoint(x: rect.minX + horizontalInset, y: rect.maxY + markLength))
-        stroke(CGPoint(x: rect.maxX, y: rect.maxY - verticalInset), CGPoint(x: rect.maxX + markLength, y: rect.maxY - verticalInset))
-        stroke(CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY), CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY + markLength))
-        stroke(CGPoint(x: rect.minX, y: rect.minY + verticalInset), CGPoint(x: rect.minX - markLength, y: rect.minY + verticalInset))
-        stroke(CGPoint(x: rect.minX + horizontalInset, y: rect.minY), CGPoint(x: rect.minX + horizontalInset, y: rect.minY - markLength))
-        stroke(CGPoint(x: rect.maxX, y: rect.minY + verticalInset), CGPoint(x: rect.maxX + markLength, y: rect.minY + verticalInset))
-        stroke(CGPoint(x: rect.maxX - horizontalInset, y: rect.minY), CGPoint(x: rect.maxX - horizontalInset, y: rect.minY - markLength))
+    static func cutGuideSegments(for rect: CGRect) -> [CutGuideSegment] {
+        let markLength: CGFloat = 9
+        let markGap: CGFloat = 2
+        let horizontalInset = max(6, min(12, rect.width * 0.06))
+        let verticalInset = max(6, min(12, rect.height * 0.04))
+
+        return [
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX - markGap, y: rect.maxY - verticalInset),
+                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.maxY - verticalInset)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX + horizontalInset, y: rect.maxY + markGap),
+                end: CGPoint(x: rect.minX + horizontalInset, y: rect.maxY + markGap + markLength)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX + markGap, y: rect.maxY - verticalInset),
+                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.maxY - verticalInset)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY + markGap),
+                end: CGPoint(x: rect.maxX - horizontalInset, y: rect.maxY + markGap + markLength)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX - markGap, y: rect.minY + verticalInset),
+                end: CGPoint(x: rect.minX - markGap - markLength, y: rect.minY + verticalInset)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.minX + horizontalInset, y: rect.minY - markGap),
+                end: CGPoint(x: rect.minX + horizontalInset, y: rect.minY - markGap - markLength)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX + markGap, y: rect.minY + verticalInset),
+                end: CGPoint(x: rect.maxX + markGap + markLength, y: rect.minY + verticalInset)
+            ),
+            CutGuideSegment(
+                start: CGPoint(x: rect.maxX - horizontalInset, y: rect.minY - markGap),
+                end: CGPoint(x: rect.maxX - horizontalInset, y: rect.minY - markGap - markLength)
+            )
+        ]
     }
 }

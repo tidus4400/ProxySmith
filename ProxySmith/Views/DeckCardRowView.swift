@@ -4,28 +4,28 @@ struct DeckCardRowView: View {
     private let cardCornerRadius: CGFloat = 6
 
     @Bindable var card: DeckCard
+    @State private var isShowingCardPreview = false
 
     let onDelete: () -> Void
     let onChange: () -> Void
 
     var body: some View {
         HStack(spacing: 18) {
-            AsyncImage(url: card.previewImageURL) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(.white.opacity(0.08))
-                    .overlay {
-                        ProgressView()
-                    }
+            Button {
+                isShowingCardPreview = true
+            } label: {
+                cardArtwork(
+                    width: 84,
+                    height: 116,
+                    cornerRadius: cardCornerRadius
+                )
             }
-            .frame(width: 84, height: 116)
-            .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-                    .stroke(.white.opacity(0.16), lineWidth: 1)
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Preview \(card.name)")
+            .accessibilityIdentifier("deck-card-preview-button-\(card.scryfallID)")
+            .popover(isPresented: $isShowingCardPreview, arrowEdge: .leading) {
+                cardPreviewPopover
             }
 
             VStack(alignment: .leading, spacing: 8) {
@@ -84,6 +84,66 @@ struct DeckCardRowView: View {
             }
             .buttonStyle(.bordered)
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("deck-card-row-\(card.scryfallID)")
         .glassPanel(cornerRadius: 26, padding: 16)
+    }
+
+    private var cardPreviewPopover: some View {
+        ZStack {
+            AppBackgroundView()
+
+            VStack(alignment: .leading, spacing: 14) {
+                cardArtwork(
+                    width: 172,
+                    height: 238,
+                    cornerRadius: 10
+                )
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(card.name)
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .accessibilityIdentifier("deck-card-preview-title-\(card.scryfallID)")
+
+                    if card.typeLine.isEmpty == false {
+                        Text(card.typeLine)
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.76))
+                    }
+
+                    Text(card.setLine)
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.62))
+                }
+            }
+            .padding(20)
+            .accessibilityIdentifier("deck-card-preview-panel-\(card.scryfallID)")
+        }
+        .frame(width: 220)
+    }
+
+    private func cardArtwork(
+        width: CGFloat,
+        height: CGFloat,
+        cornerRadius: CGFloat
+    ) -> some View {
+        AsyncImage(url: card.previewImageURL) { image in
+            image
+                .resizable()
+                .scaledToFill()
+        } placeholder: {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .fill(.white.opacity(0.08))
+                .overlay {
+                    ProgressView()
+                }
+        }
+        .frame(width: width, height: height)
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                .stroke(.white.opacity(0.16), lineWidth: 1)
+        }
     }
 }

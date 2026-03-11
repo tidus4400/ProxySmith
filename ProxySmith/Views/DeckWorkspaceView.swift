@@ -94,10 +94,19 @@ struct DeckWorkspaceView: View {
                     } label: {
                         buttonLabel(title: "Preview Sheets", systemImage: "doc.text.magnifyingglass")
                             .frame(maxWidth: .infinity)
+                            .foregroundStyle(.white)
+                            .background {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(Color(red: 0.22, green: 0.31, blue: 0.45))
+                            }
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(.white.opacity(0.18), lineWidth: 1)
+                            }
                     }
-                    .buttonStyle(.bordered)
-                    .tint(Color(red: 0.70, green: 0.79, blue: 0.93))
+                    .buttonStyle(.plain)
                     .disabled(deck.cards.isEmpty || isExporting)
+                    .opacity(deck.cards.isEmpty || isExporting ? 0.55 : 1)
                     .accessibilityIdentifier("deck-preview-sheets-button")
 
                     Button {

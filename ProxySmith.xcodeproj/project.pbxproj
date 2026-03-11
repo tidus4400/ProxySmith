@@ -34,6 +34,7 @@
 		D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD831C6C3DA6A14B9135B71 /* ContentView.swift */; };
 		DA55102254A658852DB4B5DC /* AppBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305761C33A2039F87AE36282 /* AppBackgroundView.swift */; };
 		DD72405AC9271BF3CECA5F83 /* DeckCardRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */; };
+		E444BBC510DAC0E52F7AB83E /* LaunchConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */; };
 		E48ADBCEA0F5985DEFE25509 /* DeckNameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A974C934F19193507B5CEDD4 /* DeckNameGenerator.swift */; };
 		F5FC75D12779C1ED7070D35E /* PDFPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93E9615A3B728E2DDE3E66B /* PDFPreviewSheet.swift */; };
 /* End PBXBuildFile section */
@@ -72,6 +73,7 @@
 		48B28B3F899183AE450E923F /* DeckExportSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckExportSnapshot.swift; sourceTree = "<group>"; };
 		52259EF75343AF0E083351BC /* ProxySmith.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProxySmith.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		698F56B7EF36340DE4E154D0 /* ProxySmithUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySmithUITests.swift; sourceTree = "<group>"; };
+		735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchConfigurationTests.swift; sourceTree = "<group>"; };
 		77C1B911A73AF419F1753102 /* LaunchConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchConfiguration.swift; sourceTree = "<group>"; };
 		7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallCardTests.swift; sourceTree = "<group>"; };
 		7BB9CFD42CE709F6CB09C2A8 /* ProxySmithUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxySmithUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,6 +117,7 @@
 			children = (
 				D5E6966FEFAAF53F8E782878 /* AppPreferencesTests.swift */,
 				1E01143AB4CF2C273A880D60 /* DeckNameGeneratorTests.swift */,
+				735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */,
 				0C9796C8F07C94D7E9975901 /* PDFExportServiceTests.swift */,
 				423D49284BE74727D7EFE64B /* PrintLayoutTests.swift */,
 				7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */,
@@ -344,6 +347,7 @@
 			files = (
 				2A952F523FD550171416B41F /* AppPreferencesTests.swift in Sources */,
 				7790A5DF4A60715900B0FA0C /* DeckNameGeneratorTests.swift in Sources */,
+				E444BBC510DAC0E52F7AB83E /* LaunchConfigurationTests.swift in Sources */,
 				AD5041011238BCEAA0E9168E /* PDFExportServiceTests.swift in Sources */,
 				A3CBD0988DED91BD90A451C5 /* PrintLayoutTests.swift in Sources */,
 				0BF1E987D91BDFF25D51CC0E /* ScryfallCardTests.swift in Sources */,

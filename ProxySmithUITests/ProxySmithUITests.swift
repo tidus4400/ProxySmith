@@ -116,7 +116,7 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
-    private func makeApp() -> XCUIApplication {
+    private func makeApp(extraLaunchArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
             "--uitesting",
@@ -125,7 +125,7 @@ final class ProxySmithUITests: XCTestCase {
             "YES",
             "-NSQuitAlwaysKeepsWindows",
             "NO"
-        ]
+        ] + extraLaunchArguments
         return app
     }
 }
