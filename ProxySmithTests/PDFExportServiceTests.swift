@@ -51,9 +51,8 @@ struct PDFExportServiceTests {
     }
 
     @Test
-    func cutGuideSegmentsAlignToRoundedTrimCorners() {
+    func cutGuideSegmentsFollowRectangularTrimEdgeTrajectory() {
         let rect = CGRect(x: 100, y: 200, width: 180, height: 252)
-        let inset = PDFExportService.roundedTrimCornerInset(for: rect)
         let segments = PDFExportService.cutGuideSegments(for: rect)
 
         let topBottomVerticalGuides = segments
@@ -65,9 +64,21 @@ struct PDFExportServiceTests {
             .map(\.start.y)
             .sorted()
 
-        #expect(inset == 13.5)
-        #expect(topBottomVerticalGuides == [rect.minX + inset, rect.minX + inset, rect.maxX - inset, rect.maxX - inset])
-        #expect(leftRightHorizontalGuides == [rect.minY + inset, rect.minY + inset, rect.maxY - inset, rect.maxY - inset])
+        #expect(topBottomVerticalGuides == [rect.minX, rect.minX, rect.maxX, rect.maxX])
+        #expect(leftRightHorizontalGuides == [rect.minY, rect.minY, rect.maxY, rect.maxY])
+    }
+
+    @Test
+    func cutGuideSegmentsStayOnCardTrimTrajectoryForEverySupportedScale() {
+        for scalePercent in 80 ... 100 {
+            let frames = PrintLayout.cardFrames(scalePercent: Double(scalePercent))
+
+            #expect(frames.count == PrintLayout.cardsPerPage)
+
+            for frame in frames {
+                assertGuidesFollowTrimTrajectory(for: frame)
+            }
+        }
     }
 }
 
@@ -80,4 +91,37 @@ private extension CutGuideSegment {
 
         return isLeftOfCard || isRightOfCard || isBelowCard || isAboveCard
     }
+}
+
+private func assertGuidesFollowTrimTrajectory(for rect: CGRect) {
+    let segments = PDFExportService.cutGuideSegments(for: rect)
+    let tolerance: CGFloat = 0.0001
+
+    let verticalGuides = segments.filter { abs($0.start.x - $0.end.x) <= tolerance }
+    let horizontalGuides = segments.filter { abs($0.start.y - $0.end.y) <= tolerance }
+
+    #expect(verticalGuides.count == 4)
+    #expect(horizontalGuides.count == 4)
+
+    let verticalXs = verticalGuides.map(\.start.x).sorted()
+    let horizontalYs = horizontalGuides.map(\.start.y).sorted()
+
+    #expect(approxEqual(verticalXs[0], rect.minX, tolerance: tolerance))
+    #expect(approxEqual(verticalXs[1], rect.minX, tolerance: tolerance))
+    #expect(approxEqual(verticalXs[2], rect.maxX, tolerance: tolerance))
+    #expect(approxEqual(verticalXs[3], rect.maxX, tolerance: tolerance))
+    #expect(approxEqual(horizontalYs[0], rect.minY, tolerance: tolerance))
+    #expect(approxEqual(horizontalYs[1], rect.minY, tolerance: tolerance))
+    #expect(approxEqual(horizontalYs[2], rect.maxY, tolerance: tolerance))
+    #expect(approxEqual(horizontalYs[3], rect.maxY, tolerance: tolerance))
+
+    for segment in segments {
+        #expect(rect.contains(segment.start) == false)
+        #expect(rect.contains(segment.end) == false)
+        #expect(segment.isOutside(rect))
+    }
+}
+
+private func approxEqual(_ lhs: CGFloat, _ rhs: CGFloat, tolerance: CGFloat) -> Bool {
+    abs(lhs - rhs) <= tolerance
 }
