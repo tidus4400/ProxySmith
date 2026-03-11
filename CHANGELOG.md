@@ -13,6 +13,7 @@
 - Untitled deck names now use explicit numeric suffixes.
 - Global deck numbering now behaves like a monotonic row ID when enabled, so deleting `Untitled Deck 6` still advances the next generated deck to `Untitled Deck 7`.
 - macOS UI tests now launch ProxySmith with persistence disabled so the main window opens deterministically during automation.
+- Removed the internal changelog workflow notice from the Settings screen.
 
 ## 0.1.0 - 2026-03-11
 
