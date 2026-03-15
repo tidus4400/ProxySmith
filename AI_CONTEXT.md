@@ -65,7 +65,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   scale slider
   add-cards popover
   preview and export actions
-  deck list with quantity control and click-to-preview card art that supports magnification gestures in the enlarged preview and can be closed by clicking the same thumbnail again
+  deck list with quantity control and click-to-preview card art that opens at its original framing, supports magnification gestures in the enlarged preview, and can be closed by clicking the same thumbnail again
 - Settings window for app-level options such as deck numbering.
 - Search sheet for Scryfall-driven card lookup.
 
@@ -93,4 +93,5 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Regenerate the Xcode project after `project.yml` changes.
 - Run `xcodebuild -scheme ProxySmith -destination 'platform=macOS' test` before handing off when changes affect app behavior, persistence, or UI flows.
 - Update `CHANGELOG.md` before every commit. Treat it as part of the deliverable, not optional documentation.
+- Treat any user request to commit as an implicit request to refresh `CHANGELOG.md` and the relevant context files before creating the commit.
 - If you change print math or Scryfall behavior, update this file.

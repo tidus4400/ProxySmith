@@ -102,6 +102,7 @@ struct DeckCardRowView: View {
                     height: 504,
                     cornerRadius: 21
                 )
+                .frame(width: 362, height: 504)
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(card.name)
@@ -190,7 +191,8 @@ private struct ZoomableCardArtwork: NSViewRepresentable {
     }
 
     func makeNSView(context: Context) -> ZoomableCardScrollView {
-        let scrollView = ZoomableCardScrollView()
+        let viewportSize = NSSize(width: width, height: height)
+        let scrollView = ZoomableCardScrollView(viewportSize: viewportSize)
         scrollView.drawsBackground = false
         scrollView.borderType = .noBorder
         scrollView.hasHorizontalScroller = true
@@ -204,7 +206,7 @@ private struct ZoomableCardArtwork: NSViewRepresentable {
         let hostingView = context.coordinator.hostingView
         hostingView.frame = CGRect(x: 0, y: 0, width: width, height: height)
         scrollView.documentView = hostingView
-        scrollView.magnification = 1
+        scrollView.resetViewport()
         return scrollView
     }
 
@@ -220,8 +222,10 @@ private struct ZoomableCardArtwork: NSViewRepresentable {
 
         if scrollView.documentView !== hostingView {
             scrollView.documentView = hostingView
+            scrollView.resetViewport()
         }
 
+        scrollView.viewportSize = NSSize(width: width, height: height)
         scrollView.minMagnification = 1
         scrollView.maxMagnification = 5
     }
@@ -236,6 +240,35 @@ private struct ZoomableCardArtwork: NSViewRepresentable {
 }
 
 private final class ZoomableCardScrollView: NSScrollView {
+    var viewportSize: NSSize {
+        didSet {
+            guard viewportSize != oldValue else { return }
+            invalidateIntrinsicContentSize()
+            frame.size = viewportSize
+            contentView.setFrameSize(viewportSize)
+        }
+    }
+
+    override var intrinsicContentSize: NSSize {
+        viewportSize
+    }
+
+    init(viewportSize: NSSize) {
+        self.viewportSize = viewportSize
+        super.init(frame: CGRect(origin: .zero, size: viewportSize))
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func resetViewport() {
+        magnification = 1
+        contentView.scroll(to: .zero)
+        reflectScrolledClipView(contentView)
+    }
+
     override func scrollWheel(with event: NSEvent) {
         guard event.modifierFlags.contains(.command) else {
             super.scrollWheel(with: event)

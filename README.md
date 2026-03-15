@@ -7,7 +7,7 @@ ProxySmith is a native macOS app for building Magic: The Gathering proxy sheets.
 - Create and manage local decks
 - Search Scryfall and add cards to a deck
 - Adjust quantities per card
-- Click a deck-list card image to inspect it at a larger high-resolution size, zoom it with pinch or `Command` + scroll, then click the same thumbnail again to close it
+- Click a deck-list card image to inspect it at a larger high-resolution size, open it at the default framing, zoom it with pinch or `Command` + scroll, then click the same thumbnail again to close it
 - Choose a print scale from 80% to 100%
 - Preview print sheets before saving the PDF
 - Configure untitled deck numbering behavior in Settings
