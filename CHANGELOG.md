@@ -14,6 +14,7 @@
 
 ### Changed
 
+- Deck-list card preview popovers now render 40% larger with high-resolution art, and clicking the same thumbnail again closes the preview.
 - PDF cut guides now render outside the card frame and continue the exact rectangular trim-edge trajectory instead of using an inset heuristic.
 - Preview Sheets now uses an explicit filled treatment so it stays visible against the glass panel.
 - Deck workspace print controls now group preview/export actions together, and the redundant card-scale metric is gone.

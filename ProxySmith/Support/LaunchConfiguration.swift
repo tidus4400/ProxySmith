@@ -28,6 +28,8 @@ enum LaunchConfiguration {
 
     static func makeUITestSampleDeck() -> Deck {
         let deck = Deck(name: "UITest Sample Deck")
+        let goblinFixtureURL = uiTestFixtureURL(named: "goblin-sharpshooter.png")
+        let serraFixtureURL = uiTestFixtureURL(named: "serra-angel.png")
 
         deck.cards.append(makeUITestCard(
             scryfallID: "ui-goblin-sharpshooter",
@@ -38,7 +40,9 @@ enum LaunchConfiguration {
             setName: "Onslaught",
             collectorNumber: "206",
             rarity: "Rare",
-            quantity: 2
+            quantity: 2,
+            previewImageURLString: goblinFixtureURL.absoluteString,
+            printImageURLString: goblinFixtureURL.absoluteString
         ))
 
         deck.cards.append(makeUITestCard(
@@ -50,7 +54,9 @@ enum LaunchConfiguration {
             setName: "Foundations",
             collectorNumber: "30",
             rarity: "Uncommon",
-            quantity: 1
+            quantity: 1,
+            previewImageURLString: serraFixtureURL.absoluteString,
+            printImageURLString: serraFixtureURL.absoluteString
         ))
 
         return deck
@@ -65,7 +71,9 @@ enum LaunchConfiguration {
         setName: String,
         collectorNumber: String,
         rarity: String,
-        quantity: Int
+        quantity: Int,
+        previewImageURLString: String,
+        printImageURLString: String
     ) -> DeckCard {
         DeckCard(
             scryfallID: scryfallID,
@@ -77,8 +85,17 @@ enum LaunchConfiguration {
             collectorNumber: collectorNumber,
             rarity: rarity,
             quantity: quantity,
-            previewImageURLString: "",
-            printImageURLString: ""
+            previewImageURLString: previewImageURLString,
+            printImageURLString: printImageURLString
         )
+    }
+
+    private static func uiTestFixtureURL(named filename: String) -> URL {
+        URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent("TestAssets/CardPreviewFixtures")
+            .appendingPathComponent(filename)
     }
 }

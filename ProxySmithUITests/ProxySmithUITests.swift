@@ -116,6 +116,32 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testDeckCardPreviewTogglesClosedOnSecondThumbnailClick() throws {
+        let app = makeApp(extraLaunchArguments: ["--uitesting-seed-sample-deck"])
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let previewRow = app.descendants(matching: .any)["deck-card-row-ui-goblin-sharpshooter"]
+        XCTAssertTrue(previewRow.waitForExistence(timeout: 10))
+
+        let previewButton = previewRow.descendants(matching: .any)["deck-card-preview-button-ui-goblin-sharpshooter"]
+        XCTAssertTrue(previewButton.waitForExistence(timeout: 5))
+
+        let previewPopovers = app.popovers
+        XCTAssertTrue(waitForCount(of: previewPopovers, toBe: 0))
+
+        previewButton.click()
+        XCTAssertTrue(waitForCount(of: previewPopovers, toBe: 1))
+
+        previewButton.click()
+        XCTAssertTrue(waitForCount(of: previewPopovers, toBe: 0))
+    }
+
+    @MainActor
     private func makeApp(extraLaunchArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
@@ -162,5 +188,15 @@ private func waitForNonExistence(
 ) -> Bool {
     let predicate = NSPredicate(format: "exists == false")
     let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
+    return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
+}
+
+private func waitForCount(
+    of query: XCUIElementQuery,
+    toBe expectedCount: Int,
+    timeout: TimeInterval = 5
+) -> Bool {
+    let predicate = NSPredicate(format: "count == %d", expectedCount)
+    let expectation = XCTNSPredicateExpectation(predicate: predicate, object: query)
     return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
 }

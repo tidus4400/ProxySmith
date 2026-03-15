@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import ProxySmith
 
@@ -12,7 +13,13 @@ struct LaunchConfigurationTests {
         #expect(deck.totalCardCount == 3)
         #expect(cardsByName["Goblin Sharpshooter"]?.quantity == 2)
         #expect(cardsByName["Goblin Sharpshooter"]?.setCode == "ONS")
+        #expect(cardsByName["Goblin Sharpshooter"]?.previewImageURL?.isFileURL == true)
+        #expect(cardsByName["Goblin Sharpshooter"]?.printImageURL?.isFileURL == true)
+        #expect(cardsByName["Goblin Sharpshooter"]?.previewImageURL.map { FileManager.default.fileExists(atPath: $0.path) } == true)
         #expect(cardsByName["Serra Angel"]?.quantity == 1)
         #expect(cardsByName["Serra Angel"]?.setCode == "FDN")
+        #expect(cardsByName["Serra Angel"]?.previewImageURL?.isFileURL == true)
+        #expect(cardsByName["Serra Angel"]?.printImageURL?.isFileURL == true)
+        #expect(cardsByName["Serra Angel"]?.previewImageURL.map { FileManager.default.fileExists(atPath: $0.path) } == true)
     }
 }

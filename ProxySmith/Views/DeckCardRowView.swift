@@ -12,9 +12,10 @@ struct DeckCardRowView: View {
     var body: some View {
         HStack(spacing: 18) {
             Button {
-                isShowingCardPreview = true
+                isShowingCardPreview.toggle()
             } label: {
                 cardArtwork(
+                    url: card.previewImageURL ?? card.printImageURL,
                     width: 84,
                     height: 116,
                     cornerRadius: cardCornerRadius
@@ -95,9 +96,10 @@ struct DeckCardRowView: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 cardArtwork(
-                    width: 172,
-                    height: 238,
-                    cornerRadius: 10
+                    url: card.printImageURL ?? card.previewImageURL,
+                    width: 362,
+                    height: 504,
+                    cornerRadius: 21
                 )
 
                 VStack(alignment: .leading, spacing: 6) {
@@ -120,16 +122,19 @@ struct DeckCardRowView: View {
             .padding(20)
             .accessibilityIdentifier("deck-card-preview-panel-\(card.scryfallID)")
         }
-        .frame(width: 220)
+        .frame(width: 410)
     }
 
     private func cardArtwork(
+        url: URL?,
         width: CGFloat,
         height: CGFloat,
         cornerRadius: CGFloat
     ) -> some View {
-        AsyncImage(url: card.previewImageURL) { image in
+        AsyncImage(url: url) { image in
             image
+                .interpolation(.high)
+                .antialiased(true)
                 .resizable()
                 .scaledToFill()
         } placeholder: {

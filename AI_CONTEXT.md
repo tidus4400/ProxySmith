@@ -54,6 +54,8 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   PDF generation and cut-guide drawing.
 - `ProxySmith/Utilities/PrintLayout.swift`
   Canonical page/card sizing calculations.
+- `TestAssets/CardPreviewFixtures`
+  Local high-resolution card PNG fixtures used by seeded UI preview testing.
 
 ## Current UX Shape
 
@@ -63,7 +65,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   scale slider
   add-cards popover
   preview and export actions
-  deck list with quantity control and click-to-preview card art
+  deck list with quantity control and click-to-preview card art that can be closed by clicking the same thumbnail again
 - Settings window for app-level options such as deck numbering.
 - Search sheet for Scryfall-driven card lookup.
 
@@ -74,7 +76,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Export cut guides now sit outside the card frame and align to the exact rectangular trim-edge trajectory of the card frame, which keeps them consistent across the full supported print-scale range.
 - Search currently uses Scryfall search syntax directly rather than a curated autocomplete domain model.
 - PDF preview now renders from the same in-memory export pipeline as saved files, so preview and export should stay visually aligned.
-- UI launches can use `--uitesting-seed-sample-deck` to preload Goblin Sharpshooter and Serra Angel rows for deterministic preview/debug validation without live network dependence.
+- UI launches can use `--uitesting-seed-sample-deck` to preload Goblin Sharpshooter and Serra Angel rows backed by local high-resolution PNG fixtures for deterministic preview/debug validation without live network dependence.
 
 ## Likely Next Features
 
