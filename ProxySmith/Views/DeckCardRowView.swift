@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct DeckCardRowView: View {
@@ -12,9 +13,10 @@ struct DeckCardRowView: View {
     var body: some View {
         HStack(spacing: 18) {
             Button {
-                isShowingCardPreview = true
+                isShowingCardPreview.toggle()
             } label: {
                 cardArtwork(
+                    url: card.previewImageURL ?? card.printImageURL,
                     width: 84,
                     height: 116,
                     cornerRadius: cardCornerRadius
@@ -94,11 +96,13 @@ struct DeckCardRowView: View {
             AppBackgroundView()
 
             VStack(alignment: .leading, spacing: 14) {
-                cardArtwork(
-                    width: 172,
-                    height: 238,
-                    cornerRadius: 10
+                ZoomableCardArtwork(
+                    url: card.printImageURL ?? card.previewImageURL,
+                    width: 362,
+                    height: 504,
+                    cornerRadius: 21
                 )
+                .frame(width: 362, height: 504)
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(card.name)
@@ -120,16 +124,35 @@ struct DeckCardRowView: View {
             .padding(20)
             .accessibilityIdentifier("deck-card-preview-panel-\(card.scryfallID)")
         }
-        .frame(width: 220)
+        .frame(width: 410)
     }
 
     private func cardArtwork(
+        url: URL?,
         width: CGFloat,
         height: CGFloat,
         cornerRadius: CGFloat
     ) -> some View {
-        AsyncImage(url: card.previewImageURL) { image in
+        CardArtworkContent(
+            url: url,
+            width: width,
+            height: height,
+            cornerRadius: cornerRadius
+        )
+    }
+}
+
+private struct CardArtworkContent: View {
+    let url: URL?
+    let width: CGFloat
+    let height: CGFloat
+    let cornerRadius: CGFloat
+
+    var body: some View {
+        AsyncImage(url: url) { image in
             image
+                .interpolation(.high)
+                .antialiased(true)
                 .resizable()
                 .scaledToFill()
         } placeholder: {
@@ -145,5 +168,123 @@ struct DeckCardRowView: View {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .stroke(.white.opacity(0.16), lineWidth: 1)
         }
+    }
+}
+
+private struct ZoomableCardArtwork: NSViewRepresentable {
+    let url: URL?
+    let width: CGFloat
+    let height: CGFloat
+    let cornerRadius: CGFloat
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(
+            hostingView: NSHostingView(
+                rootView: CardArtworkContent(
+                    url: url,
+                    width: width,
+                    height: height,
+                    cornerRadius: cornerRadius
+                )
+            )
+        )
+    }
+
+    func makeNSView(context: Context) -> ZoomableCardScrollView {
+        let viewportSize = NSSize(width: width, height: height)
+        let scrollView = ZoomableCardScrollView(viewportSize: viewportSize)
+        scrollView.drawsBackground = false
+        scrollView.borderType = .noBorder
+        scrollView.hasHorizontalScroller = true
+        scrollView.hasVerticalScroller = true
+        scrollView.autohidesScrollers = true
+        scrollView.scrollerStyle = .overlay
+        scrollView.allowsMagnification = true
+        scrollView.minMagnification = 1
+        scrollView.maxMagnification = 5
+
+        let hostingView = context.coordinator.hostingView
+        hostingView.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        scrollView.documentView = hostingView
+        scrollView.resetViewport()
+        return scrollView
+    }
+
+    func updateNSView(_ scrollView: ZoomableCardScrollView, context: Context) {
+        let hostingView = context.coordinator.hostingView
+        hostingView.rootView = CardArtworkContent(
+            url: url,
+            width: width,
+            height: height,
+            cornerRadius: cornerRadius
+        )
+        hostingView.frame = CGRect(x: 0, y: 0, width: width, height: height)
+
+        if scrollView.documentView !== hostingView {
+            scrollView.documentView = hostingView
+            scrollView.resetViewport()
+        }
+
+        scrollView.viewportSize = NSSize(width: width, height: height)
+        scrollView.minMagnification = 1
+        scrollView.maxMagnification = 5
+    }
+
+    final class Coordinator {
+        let hostingView: NSHostingView<CardArtworkContent>
+
+        init(hostingView: NSHostingView<CardArtworkContent>) {
+            self.hostingView = hostingView
+        }
+    }
+}
+
+private final class ZoomableCardScrollView: NSScrollView {
+    var viewportSize: NSSize {
+        didSet {
+            guard viewportSize != oldValue else { return }
+            invalidateIntrinsicContentSize()
+            frame.size = viewportSize
+            contentView.setFrameSize(viewportSize)
+        }
+    }
+
+    override var intrinsicContentSize: NSSize {
+        viewportSize
+    }
+
+    init(viewportSize: NSSize) {
+        self.viewportSize = viewportSize
+        super.init(frame: CGRect(origin: .zero, size: viewportSize))
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func resetViewport() {
+        magnification = 1
+        contentView.scroll(to: .zero)
+        reflectScrolledClipView(contentView)
+    }
+
+    override func scrollWheel(with event: NSEvent) {
+        guard event.modifierFlags.contains(.command) else {
+            super.scrollWheel(with: event)
+            return
+        }
+
+        let deltaY = event.hasPreciseScrollingDeltas ? event.scrollingDeltaY : event.scrollingDeltaY * 8
+        guard deltaY != 0 else { return }
+
+        let zoomFactor = pow(1.08, deltaY / 10)
+        let proposedMagnification = magnification * zoomFactor
+        let clampedMagnification = min(maxMagnification, max(minMagnification, proposedMagnification))
+        guard abs(clampedMagnification - magnification) > 0.001 else { return }
+
+        let documentPoint = documentView?.convert(event.locationInWindow, from: nil)
+            ?? CGPoint(x: bounds.midX, y: bounds.midY)
+        setMagnification(clampedMagnification, centeredAt: documentPoint)
     }
 }
