@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct DeckCardRowView: View {
@@ -95,7 +96,7 @@ struct DeckCardRowView: View {
             AppBackgroundView()
 
             VStack(alignment: .leading, spacing: 14) {
-                cardArtwork(
+                ZoomableCardArtwork(
                     url: card.printImageURL ?? card.previewImageURL,
                     width: 362,
                     height: 504,
@@ -131,6 +132,22 @@ struct DeckCardRowView: View {
         height: CGFloat,
         cornerRadius: CGFloat
     ) -> some View {
+        CardArtworkContent(
+            url: url,
+            width: width,
+            height: height,
+            cornerRadius: cornerRadius
+        )
+    }
+}
+
+private struct CardArtworkContent: View {
+    let url: URL?
+    let width: CGFloat
+    let height: CGFloat
+    let cornerRadius: CGFloat
+
+    var body: some View {
         AsyncImage(url: url) { image in
             image
                 .interpolation(.high)
@@ -150,5 +167,91 @@ struct DeckCardRowView: View {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                 .stroke(.white.opacity(0.16), lineWidth: 1)
         }
+    }
+}
+
+private struct ZoomableCardArtwork: NSViewRepresentable {
+    let url: URL?
+    let width: CGFloat
+    let height: CGFloat
+    let cornerRadius: CGFloat
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(
+            hostingView: NSHostingView(
+                rootView: CardArtworkContent(
+                    url: url,
+                    width: width,
+                    height: height,
+                    cornerRadius: cornerRadius
+                )
+            )
+        )
+    }
+
+    func makeNSView(context: Context) -> ZoomableCardScrollView {
+        let scrollView = ZoomableCardScrollView()
+        scrollView.drawsBackground = false
+        scrollView.borderType = .noBorder
+        scrollView.hasHorizontalScroller = true
+        scrollView.hasVerticalScroller = true
+        scrollView.autohidesScrollers = true
+        scrollView.scrollerStyle = .overlay
+        scrollView.allowsMagnification = true
+        scrollView.minMagnification = 1
+        scrollView.maxMagnification = 5
+
+        let hostingView = context.coordinator.hostingView
+        hostingView.frame = CGRect(x: 0, y: 0, width: width, height: height)
+        scrollView.documentView = hostingView
+        scrollView.magnification = 1
+        return scrollView
+    }
+
+    func updateNSView(_ scrollView: ZoomableCardScrollView, context: Context) {
+        let hostingView = context.coordinator.hostingView
+        hostingView.rootView = CardArtworkContent(
+            url: url,
+            width: width,
+            height: height,
+            cornerRadius: cornerRadius
+        )
+        hostingView.frame = CGRect(x: 0, y: 0, width: width, height: height)
+
+        if scrollView.documentView !== hostingView {
+            scrollView.documentView = hostingView
+        }
+
+        scrollView.minMagnification = 1
+        scrollView.maxMagnification = 5
+    }
+
+    final class Coordinator {
+        let hostingView: NSHostingView<CardArtworkContent>
+
+        init(hostingView: NSHostingView<CardArtworkContent>) {
+            self.hostingView = hostingView
+        }
+    }
+}
+
+private final class ZoomableCardScrollView: NSScrollView {
+    override func scrollWheel(with event: NSEvent) {
+        guard event.modifierFlags.contains(.command) else {
+            super.scrollWheel(with: event)
+            return
+        }
+
+        let deltaY = event.hasPreciseScrollingDeltas ? event.scrollingDeltaY : event.scrollingDeltaY * 8
+        guard deltaY != 0 else { return }
+
+        let zoomFactor = pow(1.08, deltaY / 10)
+        let proposedMagnification = magnification * zoomFactor
+        let clampedMagnification = min(maxMagnification, max(minMagnification, proposedMagnification))
+        guard abs(clampedMagnification - magnification) > 0.001 else { return }
+
+        let documentPoint = documentView?.convert(event.locationInWindow, from: nil)
+            ?? CGPoint(x: bounds.midX, y: bounds.midY)
+        setMagnification(clampedMagnification, centeredAt: documentPoint)
     }
 }

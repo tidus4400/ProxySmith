@@ -65,7 +65,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   scale slider
   add-cards popover
   preview and export actions
-  deck list with quantity control and click-to-preview card art that can be closed by clicking the same thumbnail again
+  deck list with quantity control and click-to-preview card art that supports magnification gestures in the enlarged preview and can be closed by clicking the same thumbnail again
 - Settings window for app-level options such as deck numbering.
 - Search sheet for Scryfall-driven card lookup.
 
