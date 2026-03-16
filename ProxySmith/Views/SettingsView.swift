@@ -118,16 +118,33 @@ struct SettingsView: View {
                 ),
                 in: 1 ... 365
             ) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Default Cache Period")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
+                HStack(alignment: .center, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Image Cache TTL")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
 
-                    Text("ProxySmith stores fetched Scryfall art under `~/.proxysmith` and only refreshes it after this window expires.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.7))
+                        Text("How long ProxySmith keeps downloaded Scryfall art before refreshing it from the network.")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
+
+                    Spacer(minLength: 12)
+
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("\(appPreferences.cardImageCachePeriodDays)")
+                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color(red: 0.98, green: 0.80, blue: 0.44))
+                            .monospacedDigit()
+
+                        Text(appPreferences.cardImageCachePeriodDays == 1 ? "Day" : "Days")
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
                 }
             }
+            .padding(18)
+            .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
             .accessibilityIdentifier("card-image-cache-period-stepper")
 
             Divider()
@@ -152,7 +169,7 @@ struct SettingsView: View {
                 )
             }
 
-            Text("Scryfall recommends caching downloaded data for at least 24 hours, and their gameplay updates are usually sparse enough that weekly refreshes are often sufficient. ProxySmith defaults to 7 days for card art, but you can tune it here.")
+            Text("Scryfall recommends caching downloaded data for at least 24 hours, and their gameplay updates are usually sparse enough that weekly refreshes are often sufficient. ProxySmith defaults to a 7 day TTL for card art, but you can tune it here.")
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(.white.opacity(0.68))
         }

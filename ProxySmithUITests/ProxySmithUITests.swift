@@ -68,6 +68,14 @@ final class ProxySmithUITests: XCTestCase {
 
         let numberingToggle = app.switches["global-deck-numbering-toggle"]
         XCTAssertTrue(waitForExistence(of: numberingToggle))
+
+        let cachePeriodStepper = app.descendants(matching: .any)["card-image-cache-period-stepper"]
+        XCTAssertTrue(waitForExistence(of: cachePeriodStepper))
+
+        let cachePeriodValue = app.staticTexts["card-image-cache-period-value"]
+        XCTAssertTrue(cachePeriodValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(cachePeriodValue.currentStringValue, "7 Days")
+
         numberingToggle.click()
 
         let resetButton = app.buttons["reset-deck-counter-button"]
