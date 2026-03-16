@@ -5,6 +5,8 @@ enum LaunchConfiguration {
     static let isUITesting = ProcessInfo.processInfo.arguments.contains("--uitesting")
     static let shouldResetState = ProcessInfo.processInfo.arguments.contains("--uitesting-reset-state")
     static let shouldSeedSampleDeck = ProcessInfo.processInfo.arguments.contains("--uitesting-seed-sample-deck")
+    static let isRunningAutomatedTests =
+        isUITesting || ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
 
     static func makeModelConfiguration() -> ModelConfiguration {
         ModelConfiguration(isStoredInMemoryOnly: isUITesting)
@@ -26,6 +28,17 @@ enum LaunchConfiguration {
             rootDirectory: fileManager.homeDirectoryForCurrentUser
                 .appendingPathComponent(".proxysmith", isDirectory: true)
         )
+    }
+
+    static func makeImageCacheStorage(
+        storageLayout: ProxySmithStorageLayout? = nil
+    ) -> CardImageRepository.Storage {
+        if isRunningAutomatedTests {
+            return .memory
+        }
+
+        let resolvedStorageLayout = storageLayout ?? makeStorageLayout()
+        return .disk(resolvedStorageLayout.cardImageCacheDirectory)
     }
 
     static func makeUITestSampleDeck() -> Deck {

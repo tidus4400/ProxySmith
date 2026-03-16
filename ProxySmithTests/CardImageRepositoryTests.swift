@@ -100,6 +100,27 @@ struct CardImageRepositoryTests {
         try? FileManager.default.removeItem(at: rootDirectory)
     }
 
+    @Test
+    func memoryStorageCachesWithoutWritingFiles() async throws {
+        let repository = CardImageRepository(
+            storage: .memory,
+            session: makeSession()
+        )
+        let url = URL(string: "https://cards.scryfall.io/small/front/9/9/99999999-9999-9999-9999-999999999999.jpg")!
+
+        MockURLProtocol.reset()
+        MockURLProtocol.configure(data: Data("memory-image".utf8))
+
+        let firstLoad = try await repository.data(for: url, maxAge: 7 * 24 * 60 * 60)
+        let secondLoad = try await repository.data(for: url, maxAge: 7 * 24 * 60 * 60)
+        let virtualCacheFileURL = await repository.cacheFileURL(for: url)
+
+        #expect(firstLoad == Data("memory-image".utf8))
+        #expect(secondLoad == Data("memory-image".utf8))
+        #expect(MockURLProtocol.requestCount == 1)
+        #expect(FileManager.default.fileExists(atPath: virtualCacheFileURL.path) == false)
+    }
+
     private func temporaryRootDirectory() -> URL {
         URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
             .appendingPathComponent("ProxySmith-CardImageRepositoryTests-\(UUID().uuidString)", isDirectory: true)

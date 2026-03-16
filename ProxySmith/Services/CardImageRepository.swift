@@ -12,6 +12,20 @@ private final class MemoryCachedImage: NSObject {
 }
 
 actor CardImageRepository {
+    enum Storage: Sendable {
+        case disk(URL)
+        case memory
+
+        var cacheDirectory: URL {
+            switch self {
+            case let .disk(directory):
+                directory
+            case .memory:
+                URL(fileURLWithPath: "/virtual/proxysmith/cache/card-images", isDirectory: true)
+            }
+        }
+    }
+
     private struct DiskCachedImage {
         let data: Data
         let storedAt: Date
@@ -23,21 +37,24 @@ actor CardImageRepository {
         let shouldPersist: Bool
     }
 
+    private let storage: Storage
     private let session: URLSession
     private let fileManager: FileManager
     private let cacheDirectory: URL
     private let dateProvider: @Sendable () -> Date
     private let memoryCache = NSCache<NSURL, MemoryCachedImage>()
     private var inFlight: [URL: Task<FetchResult, Error>] = [:]
+    private var inMemoryStoredImages: [URL: DiskCachedImage] = [:]
 
     init(
-        cacheDirectory: URL = LaunchConfiguration.makeStorageLayout().cardImageCacheDirectory,
+        storage: Storage = LaunchConfiguration.makeImageCacheStorage(),
         session: URLSession? = nil,
         fileManager: FileManager = .default,
         dateProvider: @escaping @Sendable () -> Date = Date.init
     ) {
+        self.storage = storage
         self.fileManager = fileManager
-        self.cacheDirectory = cacheDirectory
+        self.cacheDirectory = storage.cacheDirectory
         self.dateProvider = dateProvider
 
         if let session {
@@ -55,6 +72,20 @@ actor CardImageRepository {
         memoryCache.countLimit = 256
     }
 
+    init(
+        cacheDirectory: URL,
+        session: URLSession? = nil,
+        fileManager: FileManager = .default,
+        dateProvider: @escaping @Sendable () -> Date = Date.init
+    ) {
+        self.init(
+            storage: .disk(cacheDirectory),
+            session: session,
+            fileManager: fileManager,
+            dateProvider: dateProvider
+        )
+    }
+
     func data(for url: URL, maxAge: TimeInterval) async throws -> Data {
         if url.isFileURL {
             return try Data(contentsOf: url)
@@ -67,7 +98,7 @@ actor CardImageRepository {
             return cached.data as Data
         }
 
-        let diskCachedImage = try loadDiskCachedImage(for: url)
+        let diskCachedImage = try loadCachedImage(for: url)
         if let diskCachedImage,
            now.timeIntervalSince(diskCachedImage.storedAt) <= maxAge {
             memoryCache.setObject(
@@ -173,31 +204,41 @@ actor CardImageRepository {
         .appendingPathComponent(filename, isDirectory: false)
     }
 
-    private func loadDiskCachedImage(for url: URL) throws -> DiskCachedImage? {
-        let fileURL = cacheFileURL(for: url)
-        guard fileManager.fileExists(atPath: fileURL.path) else {
-            return nil
-        }
+    private func loadCachedImage(for url: URL) throws -> DiskCachedImage? {
+        switch storage {
+        case .memory:
+            return inMemoryStoredImages[url]
+        case .disk:
+            let fileURL = cacheFileURL(for: url)
+            guard fileManager.fileExists(atPath: fileURL.path) else {
+                return nil
+            }
 
-        let resourceValues = try fileURL.resourceValues(forKeys: [.contentModificationDateKey])
-        let storedAt = resourceValues.contentModificationDate ?? .distantPast
-        let data = try Data(contentsOf: fileURL)
-        return DiskCachedImage(data: data, storedAt: storedAt)
+            let resourceValues = try fileURL.resourceValues(forKeys: [.contentModificationDateKey])
+            let storedAt = resourceValues.contentModificationDate ?? .distantPast
+            let data = try Data(contentsOf: fileURL)
+            return DiskCachedImage(data: data, storedAt: storedAt)
+        }
     }
 
     private func store(_ data: Data, for url: URL, storedAt: Date) throws {
-        let fileURL = cacheFileURL(for: url)
+        switch storage {
+        case .memory:
+            inMemoryStoredImages[url] = DiskCachedImage(data: data, storedAt: storedAt)
+        case .disk:
+            let fileURL = cacheFileURL(for: url)
 
-        try fileManager.createDirectory(
-            at: fileURL.deletingLastPathComponent(),
-            withIntermediateDirectories: true,
-            attributes: nil
-        )
-        try data.write(to: fileURL, options: .atomic)
-        try fileManager.setAttributes(
-            [.modificationDate: storedAt],
-            ofItemAtPath: fileURL.path
-        )
+            try fileManager.createDirectory(
+                at: fileURL.deletingLastPathComponent(),
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            try data.write(to: fileURL, options: .atomic)
+            try fileManager.setAttributes(
+                [.modificationDate: storedAt],
+                ofItemAtPath: fileURL.path
+            )
+        }
     }
 
     private func cacheKey(for url: URL) -> String {

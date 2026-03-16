@@ -9,7 +9,9 @@ struct AppServices {
     static func live(storageLayout: ProxySmithStorageLayout) -> AppServices {
         AppServices(
             scryfallClient: ScryfallClient(),
-            imageRepository: CardImageRepository(cacheDirectory: storageLayout.cardImageCacheDirectory),
+            imageRepository: CardImageRepository(
+                storage: LaunchConfiguration.makeImageCacheStorage(storageLayout: storageLayout)
+            ),
             pdfExportService: PDFExportService()
         )
     }
