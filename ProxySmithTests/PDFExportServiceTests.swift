@@ -10,7 +10,11 @@ struct PDFExportServiceTests {
         let snapshot = DeckExportSnapshot(deckName: "Empty", scalePercent: 100, cards: [])
 
         do {
-            _ = try await service.render(snapshot: snapshot, imageRepository: CardImageRepository())
+            _ = try await service.render(
+                snapshot: snapshot,
+                imageRepository: CardImageRepository(),
+                cacheLifetime: TimeInterval(AppPreferences.defaultCardImageCachePeriodDays * 24 * 60 * 60)
+            )
             Issue.record("Expected empty deck rendering to fail.")
         } catch let error as PDFExportError {
             #expect(error == .noCards)
@@ -30,7 +34,11 @@ struct PDFExportServiceTests {
             ]
         )
 
-        let data = try await service.render(snapshot: snapshot, imageRepository: CardImageRepository())
+        let data = try await service.render(
+            snapshot: snapshot,
+            imageRepository: CardImageRepository(),
+            cacheLifetime: TimeInterval(AppPreferences.defaultCardImageCachePeriodDays * 24 * 60 * 60)
+        )
 
         #expect(data.isEmpty == false)
         #expect(data.starts(with: Data("%PDF".utf8)))

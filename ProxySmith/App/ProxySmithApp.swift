@@ -4,13 +4,20 @@ import SwiftUI
 @main
 struct ProxySmithApp: App {
     private let modelContainer: ModelContainer
+    private let storageLayout: ProxySmithStorageLayout
     private let appPreferences: AppPreferences
-    private let services = AppServices.live
+    @State private var services: AppServices
 
     init() {
         do {
-            let userDefaults = LaunchConfiguration.makeUserDefaults()
-            appPreferences = AppPreferences(defaults: userDefaults)
+            storageLayout = LaunchConfiguration.makeStorageLayout()
+            appPreferences = AppPreferences(storageLayout: storageLayout)
+            _services = State(
+                initialValue: AppServices.live(
+                    storageLayout: storageLayout,
+                    preferredCardImageCacheDirectory: appPreferences.cardImageCacheDirectory
+                )
+            )
             modelContainer = try ModelContainer(
                 for: Deck.self,
                 DeckCard.self,
@@ -36,7 +43,12 @@ struct ProxySmithApp: App {
         }
 
         Settings {
-            SettingsView()
+            SettingsView {
+                services = AppServices.live(
+                    storageLayout: storageLayout,
+                    preferredCardImageCacheDirectory: appPreferences.cardImageCacheDirectory
+                )
+            }
                 .environment(appPreferences)
         }
         .modelContainer(modelContainer)

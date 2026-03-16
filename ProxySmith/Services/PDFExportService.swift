@@ -23,19 +23,35 @@ struct CutGuideSegment: Equatable {
 }
 
 struct PDFExportService {
-    func export(snapshot: DeckExportSnapshot, to url: URL, imageRepository: CardImageRepository) async throws {
-        let data = try await render(snapshot: snapshot, imageRepository: imageRepository)
+    func export(
+        snapshot: DeckExportSnapshot,
+        to url: URL,
+        imageRepository: CardImageRepository,
+        cacheLifetime: TimeInterval
+    ) async throws {
+        let data = try await render(
+            snapshot: snapshot,
+            imageRepository: imageRepository,
+            cacheLifetime: cacheLifetime
+        )
         try data.write(to: url, options: .atomic)
     }
 
-    func render(snapshot: DeckExportSnapshot, imageRepository: CardImageRepository) async throws -> Data {
+    func render(
+        snapshot: DeckExportSnapshot,
+        imageRepository: CardImageRepository,
+        cacheLifetime: TimeInterval
+    ) async throws -> Data {
         let cards = snapshot.flattenedCards
         guard !cards.isEmpty else {
             throw PDFExportError.noCards
         }
 
         let uniqueImageURLs = Array(Set(cards.compactMap(\.imageURL)))
-        let imageData = try await imageRepository.prefetchData(for: uniqueImageURLs)
+        let imageData = try await imageRepository.prefetchData(
+            for: uniqueImageURLs,
+            maxAge: cacheLifetime
+        )
 
         let data = NSMutableData()
         var mediaBox = CGRect(origin: .zero, size: PrintLayout.a4PageSize)

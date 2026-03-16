@@ -7,10 +7,11 @@
 - Added click-to-preview zoom popovers for deck-list card art.
 - Added deterministic sample-deck seeding for Goblin Sharpshooter and Serra Angel rows.
 - Added an in-app PDF sheet preview before export.
+- Added a persistent Scryfall card-image cache under `~/.proxysmith/cache/card-images` with configurable retention in Settings.
 - Added unit coverage for the PDF render path and a UI test covering outside-click dismissal for the add-cards popover.
 - Added a Settings window for deck-numbering controls, including a global numbering toggle and a counter reset action.
 - Added UI tests for default deck numbering and settings-driven number reuse.
-- Added unit tests for deck-name generation and app-preference persistence.
+- Added unit tests for deck-name generation, app-preference persistence, and card-image cache refresh behavior.
 
 ### Changed
 
@@ -22,6 +23,7 @@
 - Deck list rows now show an explicit quantity badge and use tighter card corners to better match MTG card framing.
 - Untitled deck names now use explicit numeric suffixes.
 - Global deck numbering now behaves like a monotonic row ID when enabled, so deleting `Untitled Deck 6` still advances the next generated deck to `Untitled Deck 7`.
+- App preferences now live in `~/.proxysmith/settings/preferences.json` instead of `UserDefaults`, and all artwork loading paths now share the same disk-backed cache policy.
 - macOS UI tests now launch ProxySmith with persistence disabled so the main window opens deterministically during automation.
 - Removed the internal changelog workflow notice from the Settings screen.
 

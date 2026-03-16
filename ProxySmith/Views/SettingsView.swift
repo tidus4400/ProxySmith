@@ -1,13 +1,27 @@
+import AppKit
 import SwiftData
 import SwiftUI
 
 struct SettingsView: View {
+    let onSaveCardImageCacheDirectory: () -> Void
+
     @Environment(AppPreferences.self) private var appPreferences
 
     @Query(sort: [SortDescriptor(\Deck.createdAt, order: .forward)])
     private var decks: [Deck]
 
     @State private var isShowingResetAlert = false
+    @State private var cacheFolderDraft = ""
+    @State private var pendingCacheFolderDraft = ""
+    @State private var pendingCacheFolderDescription = ""
+    @State private var isShowingCacheFolderSaveConfirmation = false
+    @State private var isShowingCacheFolderError = false
+    @State private var cacheFolderErrorMessage = ""
+    @State private var settingsWindowObserver = SettingsWindowObserver()
+
+    init(onSaveCardImageCacheDirectory: @escaping () -> Void = {}) {
+        self.onSaveCardImageCacheDirectory = onSaveCardImageCacheDirectory
+    }
 
     var body: some View {
         ZStack {
@@ -17,12 +31,22 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     headerPanel
                     numberingPanel
+                    imageCachePanel
                 }
                 .padding(24)
             }
         }
         .frame(minWidth: 720, minHeight: 520)
         .accessibilityIdentifier("settings-root")
+        .background(
+            SettingsWindowAccessor { window in
+                settingsWindowObserver.observe(
+                    window: window,
+                    onWindowAttached: resetCacheFolderDraft,
+                    onWindowWillClose: resetCacheFolderDraft
+                )
+            }
+        )
         .alert("Reset Deck Counter?", isPresented: $isShowingResetAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Reset") {
@@ -30,6 +54,19 @@ struct SettingsView: View {
             }
         } message: {
             Text("The stored counter will return to 1. Existing untitled decks still reserve higher numbers while global numbering stays enabled.")
+        }
+        .confirmationDialog("Save Cache Folder?", isPresented: $isShowingCacheFolderSaveConfirmation, titleVisibility: .visible) {
+            Button("Save") {
+                saveCacheFolder()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("ProxySmith will store card art in `\(pendingCacheFolderDescription)` after this change is saved.")
+        }
+        .alert("Invalid Cache Folder", isPresented: $isShowingCacheFolderError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(cacheFolderErrorMessage)
         }
     }
 
@@ -39,7 +76,7 @@ struct SettingsView: View {
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Text("Control how ProxySmith assigns default deck names and keeps the numbering sequence predictable.")
+            Text("Control ProxySmith’s deck numbering and how long Scryfall card images stay cached before the app refreshes them.")
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(.white.opacity(0.78))
         }
@@ -104,11 +141,153 @@ struct SettingsView: View {
         .glassPanel(cornerRadius: 32, padding: 24)
     }
 
+    private var imageCachePanel: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Card Image Cache")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            Stepper(
+                value: Binding(
+                    get: { appPreferences.cardImageCachePeriodDays },
+                    set: { appPreferences.cardImageCachePeriodDays = $0 }
+                ),
+                in: 1 ... 365
+            ) {
+                HStack(alignment: .center, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Image Cache TTL")
+                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white)
+
+                        Text("How long ProxySmith keeps downloaded Scryfall art before refreshing it from the network.")
+                            .font(.system(size: 13, weight: .medium, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
+
+                    Spacer(minLength: 12)
+
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("\(appPreferences.cardImageCachePeriodDays)")
+                            .font(.system(size: 34, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color(red: 0.98, green: 0.80, blue: 0.44))
+                            .monospacedDigit()
+
+                        Text(appPreferences.cardImageCachePeriodDays == 1 ? "Day" : "Days")
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.white.opacity(0.7))
+                    }
+                }
+            }
+            .padding(18)
+            .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .accessibilityIdentifier("card-image-cache-period-stepper")
+
+            Divider()
+                .overlay(.white.opacity(0.14))
+
+            imageCacheFolderEditor
+
+            HStack(alignment: .top, spacing: 16) {
+                settingsMetric(
+                    title: "Refresh After",
+                    value: "\(appPreferences.cardImageCachePeriodDays) \(appPreferences.cardImageCachePeriodDays == 1 ? "Day" : "Days")",
+                    accessibilityIdentifier: "card-image-cache-period-value"
+                )
+
+                settingsMetric(
+                    title: "Saved Folder",
+                    value: appPreferences.cardImageCacheLocationDescription,
+                    accessibilityIdentifier: "card-image-cache-location-value"
+                )
+
+                settingsMetric(
+                    title: "Settings File",
+                    value: appPreferences.settingsFileLocationDescription
+                )
+            }
+
+            Text("Scryfall recommends caching downloaded data for at least 24 hours, and their gameplay updates are usually sparse enough that weekly refreshes are often sufficient. ProxySmith defaults to a 7 day TTL for card art, but you can tune it here.")
+                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.68))
+        }
+        .glassPanel(cornerRadius: 32, padding: 24)
+    }
+
+    private var imageCacheFolderEditor: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 16) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Image Cache Folder")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text("Enter an absolute path or a `~/` path, then save and confirm the change.")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+
+                Spacer(minLength: 12)
+
+                Button("Save Folder") {
+                    confirmCacheFolderSave()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color(red: 0.96, green: 0.63, blue: 0.22))
+                .disabled(cacheFolderDraft.trimmingCharacters(in: .whitespacesAndNewlines) == appPreferences.cardImageCacheDirectoryInput)
+                .accessibilityIdentifier("save-card-image-cache-folder-button")
+            }
+
+            TextField("~/.proxysmith/cache/card-images", text: $cacheFolderDraft)
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 14, weight: .medium, design: .monospaced))
+                .accessibilityIdentifier("card-image-cache-folder-field")
+
+            Text("Leave the field blank to restore the default cache location under `~/.proxysmith/cache/card-images`.")
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.62))
+        }
+        .padding(18)
+        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
     private var effectiveNextGlobalDeckNumber: Int {
         DeckNameGenerator.nextGlobalDeckNumber(
             existingNames: decks.map(\.name),
             storedNextGlobalDeckNumber: appPreferences.nextGlobalDeckNumber
         )
+    }
+
+    private func confirmCacheFolderSave() {
+        do {
+            let resolvedDirectory = try appPreferences.previewCardImageCacheDirectory(for: cacheFolderDraft)
+            pendingCacheFolderDraft = cacheFolderDraft
+            pendingCacheFolderDescription = resolvedDirectory.pathRelativeToHome()
+            isShowingCacheFolderSaveConfirmation = true
+        } catch {
+            cacheFolderErrorMessage = error.localizedDescription
+            isShowingCacheFolderError = true
+        }
+    }
+
+    private func saveCacheFolder() {
+        do {
+            try appPreferences.saveCardImageCacheDirectory(from: pendingCacheFolderDraft)
+            cacheFolderDraft = appPreferences.cardImageCacheDirectoryInput
+            onSaveCardImageCacheDirectory()
+        } catch {
+            cacheFolderErrorMessage = error.localizedDescription
+            isShowingCacheFolderError = true
+        }
+    }
+
+    private func resetCacheFolderDraft() {
+        cacheFolderDraft = appPreferences.cardImageCacheDirectoryInput
+        pendingCacheFolderDraft = ""
+        pendingCacheFolderDescription = ""
+        isShowingCacheFolderSaveConfirmation = false
+        isShowingCacheFolderError = false
+        cacheFolderErrorMessage = ""
     }
 
     private func settingsMetric(
@@ -139,5 +318,104 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
         .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+}
+
+private final class SettingsWindowObserver {
+    private weak var observedWindow: NSWindow?
+    private var didResignKeyObserver: NSObjectProtocol?
+    private var willCloseObserver: NSObjectProtocol?
+
+    deinit {
+        detach()
+    }
+
+    func observe(
+        window: NSWindow?,
+        onWindowAttached: @escaping () -> Void,
+        onWindowWillClose: @escaping () -> Void
+    ) {
+        guard observedWindow !== window else { return }
+
+        detach()
+        observedWindow = window
+
+        guard let window else { return }
+
+        onWindowAttached()
+
+        didResignKeyObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didResignKeyNotification,
+            object: window,
+            queue: .main
+        ) { [weak self, weak window] _ in
+            guard let self, let window else { return }
+
+            if window.attachedSheet != nil {
+                return
+            }
+
+            Task { @MainActor [weak self, weak window] in
+                guard let self, let window else { return }
+                guard self.observedWindow === window else { return }
+                guard window.attachedSheet == nil else { return }
+                window.close()
+            }
+        }
+
+        willCloseObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            onWindowWillClose()
+            self?.detach()
+        }
+    }
+
+    private func detach() {
+        if let didResignKeyObserver {
+            NotificationCenter.default.removeObserver(didResignKeyObserver)
+            self.didResignKeyObserver = nil
+        }
+
+        if let willCloseObserver {
+            NotificationCenter.default.removeObserver(willCloseObserver)
+            self.willCloseObserver = nil
+        }
+
+        observedWindow = nil
+    }
+}
+
+private struct SettingsWindowAccessor: NSViewRepresentable {
+    let onWindowChange: (NSWindow?) -> Void
+
+    func makeNSView(context: Context) -> WindowReportingView {
+        let view = WindowReportingView()
+        view.onWindowChange = onWindowChange
+        return view
+    }
+
+    func updateNSView(_ nsView: WindowReportingView, context: Context) {
+        nsView.onWindowChange = onWindowChange
+        nsView.reportCurrentWindow()
+    }
+}
+
+private final class WindowReportingView: NSView {
+    var onWindowChange: ((NSWindow?) -> Void)?
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        reportCurrentWindow()
+    }
+
+    func reportCurrentWindow() {
+        guard let onWindowChange else { return }
+
+        Task { @MainActor [weak self] in
+            onWindowChange(self?.window)
+        }
     }
 }

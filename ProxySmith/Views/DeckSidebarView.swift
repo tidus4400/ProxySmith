@@ -33,7 +33,7 @@ struct DeckSidebarView: View {
                 .listStyle(.sidebar)
                 .glassPanel(cornerRadius: 30, padding: 8)
 
-                HStack(spacing: 12) {
+                VStack(spacing: 12) {
                     Button(action: onCreateDeck) {
                         Label("New Deck", systemImage: "plus")
                             .frame(maxWidth: .infinity)
@@ -42,20 +42,23 @@ struct DeckSidebarView: View {
                     .tint(Color(red: 0.33, green: 0.76, blue: 0.73))
                     .accessibilityIdentifier("sidebar-new-deck-button")
 
-                    Button(role: .destructive, action: onDeleteSelectedDeck) {
-                        Image(systemName: "trash")
-                            .frame(width: 32)
-                    }
-                    .buttonStyle(.bordered)
-                    .accessibilityIdentifier("sidebar-delete-deck-button")
-                    .disabled(selectedDeck == nil)
+                    HStack(spacing: 12) {
+                        Button(role: .destructive, action: onDeleteSelectedDeck) {
+                            Label("Delete Deck", systemImage: "trash")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .accessibilityIdentifier("sidebar-delete-deck-button")
+                        .disabled(selectedDeck == nil)
 
-                    Button(action: onOpenSettings) {
-                        Image(systemName: "gearshape")
-                            .frame(width: 32)
+                        Button(action: onOpenSettings) {
+                            Label("Settings", systemImage: "gearshape.fill")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(red: 0.96, green: 0.63, blue: 0.22))
+                        .accessibilityIdentifier("sidebar-open-settings-button")
                     }
-                    .buttonStyle(.bordered)
-                    .accessibilityIdentifier("sidebar-open-settings-button")
                 }
             }
             .padding(24)
