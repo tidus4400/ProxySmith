@@ -19,6 +19,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 
 - Keep Scryfall traffic conservative.
   API calls currently flow through `ScryfallClient` and `RequestThrottler`.
+  Card art now also uses a persistent disk cache with a default 7-day refresh window that can be adjusted in Settings.
 - Preserve print accuracy.
   `PrintLayout` owns the canonical A4 and MTG card sizing math.
 - Keep the app native-first.
@@ -37,7 +38,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - `ProxySmith/App/ContentView.swift`
   Root navigation and deck selection.
 - `ProxySmith/Support/AppPreferences.swift`
-  Persistent app-level preferences such as deck-numbering behavior.
+  Persistent app-level preferences, stored at `~/.proxysmith/settings/preferences.json`.
 - `ProxySmith/Utilities/DeckNameGenerator.swift`
   Canonical logic for untitled deck numbering and sequence handling.
 - `ProxySmith/Models/Deck.swift`
@@ -49,7 +50,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - `ProxySmith/Services/ScryfallClient.swift`
   Rate-limited Scryfall metadata access.
 - `ProxySmith/Services/CardImageRepository.swift`
-  Cached image fetcher used by export.
+  Shared image fetcher used by previews and export, backed by `~/.proxysmith/cache/card-images`.
 - `ProxySmith/Services/PDFExportService.swift`
   PDF generation and cut-guide drawing.
 - `ProxySmith/Utilities/PrintLayout.swift`
@@ -66,7 +67,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   add-cards popover
   preview and export actions
   deck list with quantity control and click-to-preview card art that opens at its original framing, supports magnification gestures in the enlarged preview, and can be closed by clicking the same thumbnail again
-- Settings window for app-level options such as deck numbering.
+- Settings window for app-level options such as deck numbering and card-image cache retention.
 - Search sheet for Scryfall-driven card lookup.
 
 ## Known Constraints

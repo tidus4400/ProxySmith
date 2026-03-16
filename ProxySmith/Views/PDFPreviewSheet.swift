@@ -4,6 +4,7 @@ import SwiftUI
 
 struct PDFPreviewSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(AppPreferences.self) private var appPreferences
 
     let snapshot: DeckExportSnapshot
     let pdfExportService: PDFExportService
@@ -70,7 +71,8 @@ struct PDFPreviewSheet: View {
         do {
             let renderedData = try await pdfExportService.render(
                 snapshot: snapshot,
-                imageRepository: imageRepository
+                imageRepository: imageRepository,
+                cacheLifetime: appPreferences.cardImageCacheLifetime
             )
             await MainActor.run {
                 previewData = renderedData

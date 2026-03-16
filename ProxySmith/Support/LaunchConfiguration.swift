@@ -6,24 +6,26 @@ enum LaunchConfiguration {
     static let shouldResetState = ProcessInfo.processInfo.arguments.contains("--uitesting-reset-state")
     static let shouldSeedSampleDeck = ProcessInfo.processInfo.arguments.contains("--uitesting-seed-sample-deck")
 
-    private static let uiTestingDefaultsSuiteName = "com.tidus4400.ProxySmith.UITests"
-
-    static func makeUserDefaults() -> UserDefaults {
-        guard isUITesting else {
-            return .standard
-        }
-
-        let defaults = UserDefaults(suiteName: uiTestingDefaultsSuiteName) ?? .standard
-
-        if shouldResetState {
-            defaults.removePersistentDomain(forName: uiTestingDefaultsSuiteName)
-        }
-
-        return defaults
-    }
-
     static func makeModelConfiguration() -> ModelConfiguration {
         ModelConfiguration(isStoredInMemoryOnly: isUITesting)
+    }
+
+    static func makeStorageLayout(fileManager: FileManager = .default) -> ProxySmithStorageLayout {
+        if isUITesting {
+            let rootDirectory = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+                .appendingPathComponent("ProxySmith-UITests", isDirectory: true)
+
+            if shouldResetState {
+                try? fileManager.removeItem(at: rootDirectory)
+            }
+
+            return ProxySmithStorageLayout(rootDirectory: rootDirectory)
+        }
+
+        return ProxySmithStorageLayout(
+            rootDirectory: fileManager.homeDirectoryForCurrentUser
+                .appendingPathComponent(".proxysmith", isDirectory: true)
+        )
     }
 
     static func makeUITestSampleDeck() -> Deck {

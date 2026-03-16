@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0BF1E987D91BDFF25D51CC0E /* ScryfallCardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B39D0594EA7D8928580F1C0 /* ScryfallCardTests.swift */; };
 		168F4351457A0C538DBC2F5E /* DeckWorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 247D82C4D3C374AAEC73297E /* DeckWorkspaceView.swift */; };
+		16D5E3CAF4E431661771958C /* CardImageRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E6DDACFC1987B6E22B48C4 /* CardImageRepositoryTests.swift */; };
 		18035E843409066E5CB3069A /* CardImageRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A19E95EF7F9FF5476706A2 /* CardImageRepository.swift */; };
 		2A952F523FD550171416B41F /* AppPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E6966FEFAAF53F8E782878 /* AppPreferencesTests.swift */; };
 		3C1FBA957A0872B63AD57631 /* LaunchConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77C1B911A73AF419F1753102 /* LaunchConfiguration.swift */; };
@@ -31,9 +32,11 @@
 		ADE00BB51AEC7C8B26114B70 /* DeckSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */; };
 		B2D97D2DC05A9454ADEA47FD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22D11EC9FC3D3369C0E0BB53 /* SettingsView.swift */; };
 		BA111B187E2F172E0B26D72C /* CardSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFF5E731724C9919409110C /* CardSearchSheet.swift */; };
+		D1C5FEE5C8BD1CDAB934724C /* CachedCardAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB884DD1A22376222EF77FC4 /* CachedCardAsyncImage.swift */; };
 		D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD831C6C3DA6A14B9135B71 /* ContentView.swift */; };
 		DA55102254A658852DB4B5DC /* AppBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305761C33A2039F87AE36282 /* AppBackgroundView.swift */; };
 		DD72405AC9271BF3CECA5F83 /* DeckCardRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */; };
+		DEA2A40A7160EA0DB02F057F /* ProxySmithStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96469834639BD0B9DD566377 /* ProxySmithStorage.swift */; };
 		E444BBC510DAC0E52F7AB83E /* LaunchConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */; };
 		E48ADBCEA0F5985DEFE25509 /* DeckNameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A974C934F19193507B5CEDD4 /* DeckNameGenerator.swift */; };
 		F5FC75D12779C1ED7070D35E /* PDFPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93E9615A3B728E2DDE3E66B /* PDFPreviewSheet.swift */; };
@@ -80,15 +83,18 @@
 		7CC74DBF68BBEDEFA0356557 /* GlassPanelModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassPanelModifier.swift; sourceTree = "<group>"; };
 		87A19E95EF7F9FF5476706A2 /* CardImageRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageRepository.swift; sourceTree = "<group>"; };
 		8C51E70F6E39E8DD881F63C3 /* ScryfallCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallCard.swift; sourceTree = "<group>"; };
+		96469834639BD0B9DD566377 /* ProxySmithStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxySmithStorage.swift; sourceTree = "<group>"; };
 		98E858B85237C53A708D1C68 /* ScryfallClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScryfallClient.swift; sourceTree = "<group>"; };
 		A93E9615A3B728E2DDE3E66B /* PDFPreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFPreviewSheet.swift; sourceTree = "<group>"; };
 		A974C934F19193507B5CEDD4 /* DeckNameGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckNameGenerator.swift; sourceTree = "<group>"; };
 		B2F5C2EDFA318BFAD766D1BF /* Deck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deck.swift; sourceTree = "<group>"; };
 		B51FDC9B30226E8C282EC6E3 /* PDFExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFExportService.swift; sourceTree = "<group>"; };
 		B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckSidebarView.swift; sourceTree = "<group>"; };
+		BB884DD1A22376222EF77FC4 /* CachedCardAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedCardAsyncImage.swift; sourceTree = "<group>"; };
 		D0910D068F678B0BC2D3EFB7 /* PrintLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintLayout.swift; sourceTree = "<group>"; };
 		D5E6966FEFAAF53F8E782878 /* AppPreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesTests.swift; sourceTree = "<group>"; };
 		DFD831C6C3DA6A14B9135B71 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E8E6DDACFC1987B6E22B48C4 /* CardImageRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageRepositoryTests.swift; sourceTree = "<group>"; };
 		F10E21A8A526FDE90521C966 /* ProxySmithTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxySmithTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -116,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				D5E6966FEFAAF53F8E782878 /* AppPreferencesTests.swift */,
+				E8E6DDACFC1987B6E22B48C4 /* CardImageRepositoryTests.swift */,
 				1E01143AB4CF2C273A880D60 /* DeckNameGeneratorTests.swift */,
 				735E451E9177A7C152079B6F /* LaunchConfigurationTests.swift */,
 				0C9796C8F07C94D7E9975901 /* PDFExportServiceTests.swift */,
@@ -136,6 +143,7 @@
 		76B849E2C07E7F0DB30E127E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BB884DD1A22376222EF77FC4 /* CachedCardAsyncImage.swift */,
 				2AFF5E731724C9919409110C /* CardSearchSheet.swift */,
 				45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */,
 				B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */,
@@ -176,6 +184,7 @@
 				05C24F9A34CB41651D83366C /* AppServices.swift */,
 				7CC74DBF68BBEDEFA0356557 /* GlassPanelModifier.swift */,
 				77C1B911A73AF419F1753102 /* LaunchConfiguration.swift */,
+				96469834639BD0B9DD566377 /* ProxySmithStorage.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -318,6 +327,7 @@
 				DA55102254A658852DB4B5DC /* AppBackgroundView.swift in Sources */,
 				54E4FF237C0E8B0F551D4CB2 /* AppPreferences.swift in Sources */,
 				655243FA03870EAFC25C3B1A /* AppServices.swift in Sources */,
+				D1C5FEE5C8BD1CDAB934724C /* CachedCardAsyncImage.swift in Sources */,
 				18035E843409066E5CB3069A /* CardImageRepository.swift in Sources */,
 				BA111B187E2F172E0B26D72C /* CardSearchSheet.swift in Sources */,
 				D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */,
@@ -335,6 +345,7 @@
 				F5FC75D12779C1ED7070D35E /* PDFPreviewSheet.swift in Sources */,
 				A9751252F07BC256900CEA42 /* PrintLayout.swift in Sources */,
 				670A38BEB605B0CCB2B46597 /* ProxySmithApp.swift in Sources */,
+				DEA2A40A7160EA0DB02F057F /* ProxySmithStorage.swift in Sources */,
 				5777484B59DE8EB6AA0BB157 /* ScryfallCard.swift in Sources */,
 				82C03E2D79E426B66C74DE0F /* ScryfallClient.swift in Sources */,
 				B2D97D2DC05A9454ADEA47FD /* SettingsView.swift in Sources */,
@@ -346,6 +357,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A952F523FD550171416B41F /* AppPreferencesTests.swift in Sources */,
+				16D5E3CAF4E431661771958C /* CardImageRepositoryTests.swift in Sources */,
 				7790A5DF4A60715900B0FA0C /* DeckNameGeneratorTests.swift in Sources */,
 				E444BBC510DAC0E52F7AB83E /* LaunchConfigurationTests.swift in Sources */,
 				AD5041011238BCEAA0E9168E /* PDFExportServiceTests.swift in Sources */,

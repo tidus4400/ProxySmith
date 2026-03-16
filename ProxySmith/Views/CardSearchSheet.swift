@@ -143,7 +143,7 @@ private struct SearchResultCardView: View {
 
     var body: some View {
         HStack(spacing: 18) {
-            AsyncImage(url: card.previewImageURL) { image in
+            CachedCardAsyncImage(url: card.previewImageURL) { image in
                 image
                     .resizable()
                     .scaledToFill()

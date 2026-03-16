@@ -149,7 +149,7 @@ private struct CardArtworkContent: View {
     let cornerRadius: CGFloat
 
     var body: some View {
-        AsyncImage(url: url) { image in
+        CachedCardAsyncImage(url: url) { image in
             image
                 .interpolation(.high)
                 .antialiased(true)
@@ -172,6 +172,9 @@ private struct CardArtworkContent: View {
 }
 
 private struct ZoomableCardArtwork: NSViewRepresentable {
+    @Environment(\.appServices) private var services
+    @Environment(AppPreferences.self) private var appPreferences
+
     let url: URL?
     let width: CGFloat
     let height: CGFloat
@@ -180,12 +183,7 @@ private struct ZoomableCardArtwork: NSViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(
             hostingView: NSHostingView(
-                rootView: CardArtworkContent(
-                    url: url,
-                    width: width,
-                    height: height,
-                    cornerRadius: cornerRadius
-                )
+                rootView: cardArtworkContent
             )
         )
     }
@@ -212,12 +210,7 @@ private struct ZoomableCardArtwork: NSViewRepresentable {
 
     func updateNSView(_ scrollView: ZoomableCardScrollView, context: Context) {
         let hostingView = context.coordinator.hostingView
-        hostingView.rootView = CardArtworkContent(
-            url: url,
-            width: width,
-            height: height,
-            cornerRadius: cornerRadius
-        )
+        hostingView.rootView = cardArtworkContent
         hostingView.frame = CGRect(x: 0, y: 0, width: width, height: height)
 
         if scrollView.documentView !== hostingView {
@@ -230,10 +223,23 @@ private struct ZoomableCardArtwork: NSViewRepresentable {
         scrollView.maxMagnification = 5
     }
 
-    final class Coordinator {
-        let hostingView: NSHostingView<CardArtworkContent>
+    private var cardArtworkContent: AnyView {
+        AnyView(
+            CardArtworkContent(
+                url: url,
+                width: width,
+                height: height,
+                cornerRadius: cornerRadius
+            )
+            .environment(\.appServices, services)
+            .environment(appPreferences)
+        )
+    }
 
-        init(hostingView: NSHostingView<CardArtworkContent>) {
+    final class Coordinator {
+        let hostingView: NSHostingView<AnyView>
+
+        init(hostingView: NSHostingView<AnyView>) {
             self.hostingView = hostingView
         }
     }

@@ -4,13 +4,15 @@ import SwiftUI
 @main
 struct ProxySmithApp: App {
     private let modelContainer: ModelContainer
+    private let storageLayout: ProxySmithStorageLayout
     private let appPreferences: AppPreferences
-    private let services = AppServices.live
+    private let services: AppServices
 
     init() {
         do {
-            let userDefaults = LaunchConfiguration.makeUserDefaults()
-            appPreferences = AppPreferences(defaults: userDefaults)
+            storageLayout = LaunchConfiguration.makeStorageLayout()
+            appPreferences = AppPreferences(storageLayout: storageLayout)
+            services = AppServices.live(storageLayout: storageLayout)
             modelContainer = try ModelContainer(
                 for: Deck.self,
                 DeckCard.self,

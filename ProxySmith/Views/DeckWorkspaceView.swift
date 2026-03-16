@@ -5,6 +5,7 @@ import SwiftUI
 struct DeckWorkspaceView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.appServices) private var services
+    @Environment(AppPreferences.self) private var appPreferences
 
     @Bindable var deck: Deck
 
@@ -234,7 +235,8 @@ struct DeckWorkspaceView: View {
             try await services.pdfExportService.export(
                 snapshot: snapshot,
                 to: url,
-                imageRepository: services.imageRepository
+                imageRepository: services.imageRepository,
+                cacheLifetime: appPreferences.cardImageCacheLifetime
             )
             deck.touch()
             try? modelContext.save()

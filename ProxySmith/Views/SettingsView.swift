@@ -17,6 +17,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     headerPanel
                     numberingPanel
+                    imageCachePanel
                 }
                 .padding(24)
             }
@@ -39,7 +40,7 @@ struct SettingsView: View {
                 .font(.system(size: 34, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Text("Control how ProxySmith assigns default deck names and keeps the numbering sequence predictable.")
+            Text("Control ProxySmith’s deck numbering and how long Scryfall card images stay cached before the app refreshes them.")
                 .font(.system(size: 15, weight: .medium, design: .rounded))
                 .foregroundStyle(.white.opacity(0.78))
         }
@@ -100,6 +101,60 @@ struct SettingsView: View {
             }
             .buttonStyle(.bordered)
             .accessibilityIdentifier("reset-deck-counter-button")
+        }
+        .glassPanel(cornerRadius: 32, padding: 24)
+    }
+
+    private var imageCachePanel: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Card Image Cache")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+
+            Stepper(
+                value: Binding(
+                    get: { appPreferences.cardImageCachePeriodDays },
+                    set: { appPreferences.cardImageCachePeriodDays = $0 }
+                ),
+                in: 1 ... 365
+            ) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Default Cache Period")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text("ProxySmith stores fetched Scryfall art under `~/.proxysmith` and only refreshes it after this window expires.")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+            }
+            .accessibilityIdentifier("card-image-cache-period-stepper")
+
+            Divider()
+                .overlay(.white.opacity(0.14))
+
+            HStack(alignment: .top, spacing: 16) {
+                settingsMetric(
+                    title: "Refresh After",
+                    value: "\(appPreferences.cardImageCachePeriodDays) \(appPreferences.cardImageCachePeriodDays == 1 ? "Day" : "Days")",
+                    accessibilityIdentifier: "card-image-cache-period-value"
+                )
+
+                settingsMetric(
+                    title: "Image Cache Folder",
+                    value: appPreferences.cardImageCacheLocationDescription,
+                    accessibilityIdentifier: "card-image-cache-location-value"
+                )
+
+                settingsMetric(
+                    title: "Settings File",
+                    value: appPreferences.settingsFileLocationDescription
+                )
+            }
+
+            Text("Scryfall recommends caching downloaded data for at least 24 hours, and their gameplay updates are usually sparse enough that weekly refreshes are often sufficient. ProxySmith defaults to 7 days for card art, but you can tune it here.")
+                .font(.system(size: 13, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.68))
         }
         .glassPanel(cornerRadius: 32, padding: 24)
     }

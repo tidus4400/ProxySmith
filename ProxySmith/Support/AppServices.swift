@@ -6,15 +6,17 @@ struct AppServices {
     let imageRepository: CardImageRepository
     let pdfExportService: PDFExportService
 
-    static let live = AppServices(
-        scryfallClient: ScryfallClient(),
-        imageRepository: CardImageRepository(),
-        pdfExportService: PDFExportService()
-    )
+    static func live(storageLayout: ProxySmithStorageLayout) -> AppServices {
+        AppServices(
+            scryfallClient: ScryfallClient(),
+            imageRepository: CardImageRepository(cacheDirectory: storageLayout.cardImageCacheDirectory),
+            pdfExportService: PDFExportService()
+        )
+    }
 }
 
 private struct AppServicesKey: EnvironmentKey {
-    static let defaultValue = AppServices.live
+    static let defaultValue = AppServices.live(storageLayout: LaunchConfiguration.makeStorageLayout())
 }
 
 extension EnvironmentValues {
@@ -23,4 +25,3 @@ extension EnvironmentValues {
         set { self[AppServicesKey.self] = newValue }
     }
 }
-
