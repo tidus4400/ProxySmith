@@ -2,12 +2,24 @@ import SwiftData
 import SwiftUI
 
 struct SettingsView: View {
+    let onSaveCardImageCacheDirectory: () -> Void
+
     @Environment(AppPreferences.self) private var appPreferences
 
     @Query(sort: [SortDescriptor(\Deck.createdAt, order: .forward)])
     private var decks: [Deck]
 
     @State private var isShowingResetAlert = false
+    @State private var cacheFolderDraft = ""
+    @State private var pendingCacheFolderDraft = ""
+    @State private var pendingCacheFolderDescription = ""
+    @State private var isShowingCacheFolderSaveConfirmation = false
+    @State private var isShowingCacheFolderError = false
+    @State private var cacheFolderErrorMessage = ""
+
+    init(onSaveCardImageCacheDirectory: @escaping () -> Void = {}) {
+        self.onSaveCardImageCacheDirectory = onSaveCardImageCacheDirectory
+    }
 
     var body: some View {
         ZStack {
@@ -31,6 +43,22 @@ struct SettingsView: View {
             }
         } message: {
             Text("The stored counter will return to 1. Existing untitled decks still reserve higher numbers while global numbering stays enabled.")
+        }
+        .confirmationDialog("Save Cache Folder?", isPresented: $isShowingCacheFolderSaveConfirmation, titleVisibility: .visible) {
+            Button("Save") {
+                saveCacheFolder()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("ProxySmith will store card art in `\(pendingCacheFolderDescription)` after this change is saved.")
+        }
+        .alert("Invalid Cache Folder", isPresented: $isShowingCacheFolderError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(cacheFolderErrorMessage)
+        }
+        .onAppear {
+            cacheFolderDraft = appPreferences.cardImageCacheDirectoryInput
         }
     }
 
@@ -150,6 +178,8 @@ struct SettingsView: View {
             Divider()
                 .overlay(.white.opacity(0.14))
 
+            imageCacheFolderEditor
+
             HStack(alignment: .top, spacing: 16) {
                 settingsMetric(
                     title: "Refresh After",
@@ -158,7 +188,7 @@ struct SettingsView: View {
                 )
 
                 settingsMetric(
-                    title: "Image Cache Folder",
+                    title: "Saved Folder",
                     value: appPreferences.cardImageCacheLocationDescription,
                     accessibilityIdentifier: "card-image-cache-location-value"
                 )
@@ -176,11 +206,71 @@ struct SettingsView: View {
         .glassPanel(cornerRadius: 32, padding: 24)
     }
 
+    private var imageCacheFolderEditor: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 16) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Image Cache Folder")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.white)
+
+                    Text("Enter an absolute path or a `~/` path, then save and confirm the change.")
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+
+                Spacer(minLength: 12)
+
+                Button("Save Folder") {
+                    confirmCacheFolderSave()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Color(red: 0.96, green: 0.63, blue: 0.22))
+                .disabled(cacheFolderDraft.trimmingCharacters(in: .whitespacesAndNewlines) == appPreferences.cardImageCacheDirectoryInput)
+                .accessibilityIdentifier("save-card-image-cache-folder-button")
+            }
+
+            TextField("~/.proxysmith/cache/card-images", text: $cacheFolderDraft)
+                .textFieldStyle(.roundedBorder)
+                .font(.system(size: 14, weight: .medium, design: .monospaced))
+                .accessibilityIdentifier("card-image-cache-folder-field")
+
+            Text("Leave the field blank to restore the default cache location under `~/.proxysmith/cache/card-images`.")
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundStyle(.white.opacity(0.62))
+        }
+        .padding(18)
+        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+
     private var effectiveNextGlobalDeckNumber: Int {
         DeckNameGenerator.nextGlobalDeckNumber(
             existingNames: decks.map(\.name),
             storedNextGlobalDeckNumber: appPreferences.nextGlobalDeckNumber
         )
+    }
+
+    private func confirmCacheFolderSave() {
+        do {
+            let resolvedDirectory = try appPreferences.previewCardImageCacheDirectory(for: cacheFolderDraft)
+            pendingCacheFolderDraft = cacheFolderDraft
+            pendingCacheFolderDescription = resolvedDirectory.pathRelativeToHome()
+            isShowingCacheFolderSaveConfirmation = true
+        } catch {
+            cacheFolderErrorMessage = error.localizedDescription
+            isShowingCacheFolderError = true
+        }
+    }
+
+    private func saveCacheFolder() {
+        do {
+            try appPreferences.saveCardImageCacheDirectory(from: pendingCacheFolderDraft)
+            cacheFolderDraft = appPreferences.cardImageCacheDirectoryInput
+            onSaveCardImageCacheDirectory()
+        } catch {
+            cacheFolderErrorMessage = error.localizedDescription
+            isShowingCacheFolderError = true
+        }
     }
 
     private func settingsMetric(

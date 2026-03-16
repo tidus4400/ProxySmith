@@ -6,13 +6,18 @@ struct ProxySmithApp: App {
     private let modelContainer: ModelContainer
     private let storageLayout: ProxySmithStorageLayout
     private let appPreferences: AppPreferences
-    private let services: AppServices
+    @State private var services: AppServices
 
     init() {
         do {
             storageLayout = LaunchConfiguration.makeStorageLayout()
             appPreferences = AppPreferences(storageLayout: storageLayout)
-            services = AppServices.live(storageLayout: storageLayout)
+            _services = State(
+                initialValue: AppServices.live(
+                    storageLayout: storageLayout,
+                    preferredCardImageCacheDirectory: appPreferences.cardImageCacheDirectory
+                )
+            )
             modelContainer = try ModelContainer(
                 for: Deck.self,
                 DeckCard.self,
@@ -38,7 +43,12 @@ struct ProxySmithApp: App {
         }
 
         Settings {
-            SettingsView()
+            SettingsView {
+                services = AppServices.live(
+                    storageLayout: storageLayout,
+                    preferredCardImageCacheDirectory: appPreferences.cardImageCacheDirectory
+                )
+            }
                 .environment(appPreferences)
         }
         .modelContainer(modelContainer)

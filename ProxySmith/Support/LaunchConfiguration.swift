@@ -31,14 +31,15 @@ enum LaunchConfiguration {
     }
 
     static func makeImageCacheStorage(
-        storageLayout: ProxySmithStorageLayout? = nil
+        storageLayout: ProxySmithStorageLayout? = nil,
+        preferredCardImageCacheDirectory: URL? = nil
     ) -> CardImageRepository.Storage {
         if isRunningAutomatedTests {
             return .memory
         }
 
         let resolvedStorageLayout = storageLayout ?? makeStorageLayout()
-        return .disk(resolvedStorageLayout.cardImageCacheDirectory)
+        return .disk(preferredCardImageCacheDirectory ?? resolvedStorageLayout.cardImageCacheDirectory)
     }
 
     static func makeUITestSampleDeck() -> Deck {

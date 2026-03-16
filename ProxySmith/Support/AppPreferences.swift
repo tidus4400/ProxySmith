@@ -5,6 +5,7 @@ private struct AppPreferencesSnapshot: Codable {
     var globalDeckNumberingEnabled = true
     var nextGlobalDeckNumber = 1
     var cardImageCachePeriodDays = AppPreferences.defaultCardImageCachePeriodDays
+    var cardImageCacheDirectoryPath: String?
 }
 
 @MainActor
@@ -12,10 +13,22 @@ private struct AppPreferencesSnapshot: Codable {
 final class AppPreferences {
     nonisolated static let defaultCardImageCachePeriodDays = 7
 
+    enum CardImageCacheDirectoryError: LocalizedError, Equatable {
+        case invalidPathFormat
+
+        var errorDescription: String? {
+            switch self {
+            case .invalidPathFormat:
+                "Use an absolute path or a path that starts with `~/`."
+            }
+        }
+    }
+
     private let fileManager: FileManager
     private let storageLayout: ProxySmithStorageLayout
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
+    private var cardImageCacheDirectoryOverridePath: String?
 
     var globalDeckNumberingEnabled: Bool {
         didSet {
@@ -55,8 +68,19 @@ final class AppPreferences {
         storageLayout.settingsFile.pathRelativeToHome(fileManager: fileManager)
     }
 
+    var cardImageCacheDirectory: URL {
+        Self.resolveCardImageCacheDirectory(
+            overridePath: cardImageCacheDirectoryOverridePath,
+            defaultDirectory: storageLayout.cardImageCacheDirectory
+        )
+    }
+
     var cardImageCacheLocationDescription: String {
-        storageLayout.cardImageCacheDirectory.pathRelativeToHome(fileManager: fileManager)
+        cardImageCacheDirectory.pathRelativeToHome(fileManager: fileManager)
+    }
+
+    var cardImageCacheDirectoryInput: String {
+        cardImageCacheLocationDescription
     }
 
     init(
@@ -75,6 +99,10 @@ final class AppPreferences {
         globalDeckNumberingEnabled = snapshot.globalDeckNumberingEnabled
         nextGlobalDeckNumber = max(snapshot.nextGlobalDeckNumber, 1)
         cardImageCachePeriodDays = min(max(snapshot.cardImageCachePeriodDays, 1), 365)
+        cardImageCacheDirectoryOverridePath = Self.normalizeStoredCardImageCacheDirectoryOverridePath(
+            snapshot.cardImageCacheDirectoryPath,
+            defaultDirectory: storageLayout.cardImageCacheDirectory
+        )
 
         persist()
     }
@@ -83,11 +111,36 @@ final class AppPreferences {
         nextGlobalDeckNumber = 1
     }
 
+    func previewCardImageCacheDirectory(for input: String) throws -> URL {
+        let normalizedOverridePath = try Self.normalizeCardImageCacheDirectoryOverridePath(
+            from: input,
+            fileManager: fileManager,
+            defaultDirectory: storageLayout.cardImageCacheDirectory
+        )
+        return Self.resolveCardImageCacheDirectory(
+            overridePath: normalizedOverridePath,
+            defaultDirectory: storageLayout.cardImageCacheDirectory
+        )
+    }
+
+    @discardableResult
+    func saveCardImageCacheDirectory(from input: String) throws -> URL {
+        let normalizedOverridePath = try Self.normalizeCardImageCacheDirectoryOverridePath(
+            from: input,
+            fileManager: fileManager,
+            defaultDirectory: storageLayout.cardImageCacheDirectory
+        )
+        cardImageCacheDirectoryOverridePath = normalizedOverridePath
+        persist()
+        return cardImageCacheDirectory
+    }
+
     private func persist() {
         let snapshot = AppPreferencesSnapshot(
             globalDeckNumberingEnabled: globalDeckNumberingEnabled,
             nextGlobalDeckNumber: nextGlobalDeckNumber,
-            cardImageCachePeriodDays: cardImageCachePeriodDays
+            cardImageCachePeriodDays: cardImageCachePeriodDays,
+            cardImageCacheDirectoryPath: cardImageCacheDirectoryOverridePath
         )
 
         do {
@@ -119,5 +172,61 @@ final class AppPreferences {
         } catch {
             return AppPreferencesSnapshot()
         }
+    }
+
+    private static func normalizeStoredCardImageCacheDirectoryOverridePath(
+        _ storedPath: String?,
+        defaultDirectory: URL
+    ) -> String? {
+        guard let storedPath,
+              storedPath.isEmpty == false,
+              storedPath.hasPrefix("/") else {
+            return nil
+        }
+
+        let normalizedPath = URL(fileURLWithPath: storedPath, isDirectory: true)
+            .standardizedFileURL
+            .path
+        return normalizedPath == defaultDirectory.standardizedFileURL.path ? nil : normalizedPath
+    }
+
+    private static func normalizeCardImageCacheDirectoryOverridePath(
+        from input: String,
+        fileManager: FileManager,
+        defaultDirectory: URL
+    ) throws -> String? {
+        let trimmedInput = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmedInput.isEmpty == false else {
+            return nil
+        }
+
+        let expandedPath: String
+        if trimmedInput == "~" {
+            expandedPath = fileManager.homeDirectoryForCurrentUser.path
+        } else if trimmedInput.hasPrefix("~/") {
+            expandedPath = fileManager.homeDirectoryForCurrentUser.path
+                .appending("/\(trimmedInput.dropFirst(2))")
+        } else if trimmedInput.hasPrefix("/") {
+            expandedPath = trimmedInput
+        } else {
+            throw CardImageCacheDirectoryError.invalidPathFormat
+        }
+
+        let normalizedPath = URL(fileURLWithPath: expandedPath, isDirectory: true)
+            .standardizedFileURL
+            .path
+        return normalizedPath == defaultDirectory.standardizedFileURL.path ? nil : normalizedPath
+    }
+
+    private static func resolveCardImageCacheDirectory(
+        overridePath: String?,
+        defaultDirectory: URL
+    ) -> URL {
+        guard let overridePath else {
+            return defaultDirectory
+        }
+
+        return URL(fileURLWithPath: overridePath, isDirectory: true)
+            .standardizedFileURL
     }
 }

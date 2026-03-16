@@ -76,6 +76,26 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertTrue(cachePeriodValue.waitForExistence(timeout: 5))
         XCTAssertEqual(cachePeriodValue.currentStringValue, "7 Days")
 
+        let cacheFolderField = app.textFields["card-image-cache-folder-field"]
+        XCTAssertTrue(cacheFolderField.waitForExistence(timeout: 5))
+        cacheFolderField.click()
+        app.typeKey("a", modifierFlags: .command)
+        cacheFolderField.typeText("/tmp/proxysmith-ui-cache")
+
+        let saveCacheFolderButton = app.buttons["save-card-image-cache-folder-button"]
+        XCTAssertTrue(saveCacheFolderButton.waitForExistence(timeout: 5))
+        saveCacheFolderButton.click()
+
+        let saveCacheFolderConfirmation = app.sheets.firstMatch.buttons["Save"]
+        XCTAssertTrue(saveCacheFolderConfirmation.waitForExistence(timeout: 5))
+        saveCacheFolderConfirmation.click()
+
+        XCTAssertEqual(cacheFolderField.currentStringValue, "/tmp/proxysmith-ui-cache")
+
+        let cacheFolderValue = app.staticTexts["card-image-cache-location-value"]
+        XCTAssertTrue(cacheFolderValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(cacheFolderValue.currentStringValue, "/tmp/proxysmith-ui-cache")
+
         numberingToggle.click()
 
         let resetButton = app.buttons["reset-deck-counter-button"]

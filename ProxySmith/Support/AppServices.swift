@@ -6,11 +6,17 @@ struct AppServices {
     let imageRepository: CardImageRepository
     let pdfExportService: PDFExportService
 
-    static func live(storageLayout: ProxySmithStorageLayout) -> AppServices {
+    static func live(
+        storageLayout: ProxySmithStorageLayout,
+        preferredCardImageCacheDirectory: URL? = nil
+    ) -> AppServices {
         AppServices(
             scryfallClient: ScryfallClient(),
             imageRepository: CardImageRepository(
-                storage: LaunchConfiguration.makeImageCacheStorage(storageLayout: storageLayout)
+                storage: LaunchConfiguration.makeImageCacheStorage(
+                    storageLayout: storageLayout,
+                    preferredCardImageCacheDirectory: preferredCardImageCacheDirectory
+                )
             ),
             pdfExportService: PDFExportService()
         )

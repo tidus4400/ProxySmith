@@ -13,12 +13,19 @@ struct AppPreferencesTests {
         preferences.globalDeckNumberingEnabled = false
         preferences.nextGlobalDeckNumber = 12
         preferences.cardImageCachePeriodDays = 14
+        try preferences.saveCardImageCacheDirectory(from: "~/Library/Caches/ProxySmith/CardImages")
 
         let reloaded = AppPreferences(storageLayout: storageLayout)
 
         #expect(reloaded.globalDeckNumberingEnabled == false)
         #expect(reloaded.nextGlobalDeckNumber == 12)
         #expect(reloaded.cardImageCachePeriodDays == 14)
+        #expect(
+            reloaded.cardImageCacheDirectory.path ==
+                FileManager.default.homeDirectoryForCurrentUser
+                .appendingPathComponent("Library/Caches/ProxySmith/CardImages", isDirectory: true)
+                .path
+        )
 
         try? FileManager.default.removeItem(at: rootDirectory)
     }
@@ -50,6 +57,38 @@ struct AppPreferencesTests {
 
         preferences.cardImageCachePeriodDays = 999
         #expect(preferences.cardImageCachePeriodDays == 365)
+
+        try? FileManager.default.removeItem(at: rootDirectory)
+    }
+
+    @Test
+    @MainActor
+    func blankCacheFolderInputRestoresDefaultLocation() throws {
+        let rootDirectory = temporaryRootDirectory()
+        let storageLayout = ProxySmithStorageLayout(rootDirectory: rootDirectory)
+
+        let preferences = AppPreferences(storageLayout: storageLayout)
+        try preferences.saveCardImageCacheDirectory(from: "/tmp/proxysmith-card-images")
+        try preferences.saveCardImageCacheDirectory(from: "")
+
+        let reloaded = AppPreferences(storageLayout: storageLayout)
+
+        #expect(reloaded.cardImageCacheDirectory.path == storageLayout.cardImageCacheDirectory.path)
+
+        try? FileManager.default.removeItem(at: rootDirectory)
+    }
+
+    @Test
+    @MainActor
+    func cacheFolderRejectsRelativePaths() throws {
+        let rootDirectory = temporaryRootDirectory()
+        let storageLayout = ProxySmithStorageLayout(rootDirectory: rootDirectory)
+
+        let preferences = AppPreferences(storageLayout: storageLayout)
+
+        #expect(throws: AppPreferences.CardImageCacheDirectoryError.invalidPathFormat) {
+            try preferences.previewCardImageCacheDirectory(for: "relative/cache-folder")
+        }
 
         try? FileManager.default.removeItem(at: rootDirectory)
     }
