@@ -323,6 +323,7 @@ struct SettingsView: View {
 
 private final class SettingsWindowObserver {
     private weak var observedWindow: NSWindow?
+    private var didResignKeyObserver: NSObjectProtocol?
     private var willCloseObserver: NSObjectProtocol?
 
     deinit {
@@ -343,6 +344,25 @@ private final class SettingsWindowObserver {
 
         onWindowAttached()
 
+        didResignKeyObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.didResignKeyNotification,
+            object: window,
+            queue: .main
+        ) { [weak self, weak window] _ in
+            guard let self, let window else { return }
+
+            if window.attachedSheet != nil {
+                return
+            }
+
+            Task { @MainActor [weak self, weak window] in
+                guard let self, let window else { return }
+                guard self.observedWindow === window else { return }
+                guard window.attachedSheet == nil else { return }
+                window.close()
+            }
+        }
+
         willCloseObserver = NotificationCenter.default.addObserver(
             forName: NSWindow.willCloseNotification,
             object: window,
@@ -354,6 +374,11 @@ private final class SettingsWindowObserver {
     }
 
     private func detach() {
+        if let didResignKeyObserver {
+            NotificationCenter.default.removeObserver(didResignKeyObserver)
+            self.didResignKeyObserver = nil
+        }
+
         if let willCloseObserver {
             NotificationCenter.default.removeObserver(willCloseObserver)
             self.willCloseObserver = nil

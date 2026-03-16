@@ -133,6 +133,48 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testUnsavedCacheFolderDraftResetsAfterOutsideClick() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let settingsButton = libraryWindow(app).buttons["sidebar-open-settings-button"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
+        settingsButton.click()
+
+        let cacheFolderField = app.textFields["card-image-cache-folder-field"]
+        XCTAssertTrue(cacheFolderField.waitForExistence(timeout: 5))
+        let originalValue = cacheFolderField.currentStringValue
+
+        let savedFolderValue = app.staticTexts["card-image-cache-location-value"]
+        XCTAssertTrue(savedFolderValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(savedFolderValue.currentStringValue, originalValue)
+
+        cacheFolderField.click()
+        app.typeKey("a", modifierFlags: .command)
+        cacheFolderField.typeText("\(originalValue ?? "")-draft")
+
+        XCTAssertEqual(cacheFolderField.currentStringValue, "\(originalValue ?? "")-draft")
+
+        libraryWindow(app).coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.92)).click()
+        XCTAssertTrue(waitForNonExistence(of: cacheFolderField))
+
+        libraryWindow(app).buttons["sidebar-open-settings-button"].click()
+
+        let reopenedCacheFolderField = app.textFields["card-image-cache-folder-field"]
+        XCTAssertTrue(reopenedCacheFolderField.waitForExistence(timeout: 5))
+        XCTAssertEqual(reopenedCacheFolderField.currentStringValue, originalValue)
+
+        let reopenedSavedFolderValue = app.staticTexts["card-image-cache-location-value"]
+        XCTAssertTrue(reopenedSavedFolderValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(reopenedSavedFolderValue.currentStringValue, originalValue)
+    }
+
+    @MainActor
     func testAddCardsPopoverDismissesOnOutsideClick() throws {
         let app = makeApp()
         app.terminateIfRunning()
@@ -269,6 +311,19 @@ final class ProxySmithUITests: XCTestCase {
         }
 
         settingsWindow.coordinate(withNormalizedOffset: CGVector(dx: 0.02, dy: 0.03)).click()
+    }
+
+    @MainActor
+    private func libraryWindow(_ app: XCUIApplication) -> XCUIElement {
+        for window in app.windows.allElementsBoundByIndex {
+            let settingsButton = window.buttons["sidebar-open-settings-button"]
+            if settingsButton.exists {
+                return window
+            }
+        }
+
+        XCTFail("Expected main library window to exist")
+        return app.windows.firstMatch
     }
 }
 
