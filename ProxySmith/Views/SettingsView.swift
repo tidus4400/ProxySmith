@@ -1,3 +1,4 @@
+import AppKit
 import SwiftData
 import SwiftUI
 
@@ -16,6 +17,7 @@ struct SettingsView: View {
     @State private var isShowingCacheFolderSaveConfirmation = false
     @State private var isShowingCacheFolderError = false
     @State private var cacheFolderErrorMessage = ""
+    @State private var settingsWindowObserver = SettingsWindowObserver()
 
     init(onSaveCardImageCacheDirectory: @escaping () -> Void = {}) {
         self.onSaveCardImageCacheDirectory = onSaveCardImageCacheDirectory
@@ -36,6 +38,15 @@ struct SettingsView: View {
         }
         .frame(minWidth: 720, minHeight: 520)
         .accessibilityIdentifier("settings-root")
+        .background(
+            SettingsWindowAccessor { window in
+                settingsWindowObserver.observe(
+                    window: window,
+                    onWindowAttached: resetCacheFolderDraft,
+                    onWindowWillClose: resetCacheFolderDraft
+                )
+            }
+        )
         .alert("Reset Deck Counter?", isPresented: $isShowingResetAlert) {
             Button("Cancel", role: .cancel) {}
             Button("Reset") {
@@ -56,12 +67,6 @@ struct SettingsView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(cacheFolderErrorMessage)
-        }
-        .onAppear {
-            resetCacheFolderDraft()
-        }
-        .onDisappear {
-            resetCacheFolderDraft()
         }
     }
 
@@ -313,5 +318,79 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(18)
         .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+    }
+}
+
+private final class SettingsWindowObserver {
+    private weak var observedWindow: NSWindow?
+    private var willCloseObserver: NSObjectProtocol?
+
+    deinit {
+        detach()
+    }
+
+    func observe(
+        window: NSWindow?,
+        onWindowAttached: @escaping () -> Void,
+        onWindowWillClose: @escaping () -> Void
+    ) {
+        guard observedWindow !== window else { return }
+
+        detach()
+        observedWindow = window
+
+        guard let window else { return }
+
+        onWindowAttached()
+
+        willCloseObserver = NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            onWindowWillClose()
+            self?.detach()
+        }
+    }
+
+    private func detach() {
+        if let willCloseObserver {
+            NotificationCenter.default.removeObserver(willCloseObserver)
+            self.willCloseObserver = nil
+        }
+
+        observedWindow = nil
+    }
+}
+
+private struct SettingsWindowAccessor: NSViewRepresentable {
+    let onWindowChange: (NSWindow?) -> Void
+
+    func makeNSView(context: Context) -> WindowReportingView {
+        let view = WindowReportingView()
+        view.onWindowChange = onWindowChange
+        return view
+    }
+
+    func updateNSView(_ nsView: WindowReportingView, context: Context) {
+        nsView.onWindowChange = onWindowChange
+        nsView.reportCurrentWindow()
+    }
+}
+
+private final class WindowReportingView: NSView {
+    var onWindowChange: ((NSWindow?) -> Void)?
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        reportCurrentWindow()
+    }
+
+    func reportCurrentWindow() {
+        guard let onWindowChange else { return }
+
+        Task { @MainActor [weak self] in
+            onWindowChange(self?.window)
+        }
     }
 }
