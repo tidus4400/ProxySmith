@@ -58,7 +58,10 @@ struct SettingsView: View {
             Text(cacheFolderErrorMessage)
         }
         .onAppear {
-            cacheFolderDraft = appPreferences.cardImageCacheDirectoryInput
+            resetCacheFolderDraft()
+        }
+        .onDisappear {
+            resetCacheFolderDraft()
         }
     }
 
@@ -271,6 +274,15 @@ struct SettingsView: View {
             cacheFolderErrorMessage = error.localizedDescription
             isShowingCacheFolderError = true
         }
+    }
+
+    private func resetCacheFolderDraft() {
+        cacheFolderDraft = appPreferences.cardImageCacheDirectoryInput
+        pendingCacheFolderDraft = ""
+        pendingCacheFolderDescription = ""
+        isShowingCacheFolderSaveConfirmation = false
+        isShowingCacheFolderError = false
+        cacheFolderErrorMessage = ""
     }
 
     private func settingsMetric(

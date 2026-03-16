@@ -117,6 +117,40 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testUnsavedCacheFolderDraftResetsAfterClosingSettings() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let settingsButton = window.buttons["sidebar-open-settings-button"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
+        settingsButton.click()
+
+        let cacheFolderField = app.textFields["card-image-cache-folder-field"]
+        XCTAssertTrue(cacheFolderField.waitForExistence(timeout: 5))
+        let originalValue = cacheFolderField.currentStringValue
+
+        cacheFolderField.click()
+        app.typeKey("a", modifierFlags: .command)
+        cacheFolderField.typeText("\(originalValue ?? "")-draft")
+
+        XCTAssertEqual(cacheFolderField.currentStringValue, "\(originalValue ?? "")-draft")
+
+        app.typeKey("w", modifierFlags: .command)
+        XCTAssertTrue(waitForNonExistence(of: cacheFolderField))
+
+        settingsButton.click()
+
+        let reopenedCacheFolderField = app.textFields["card-image-cache-folder-field"]
+        XCTAssertTrue(reopenedCacheFolderField.waitForExistence(timeout: 5))
+        XCTAssertEqual(reopenedCacheFolderField.currentStringValue, originalValue)
+    }
+
+    @MainActor
     func testAddCardsPopoverDismissesOnOutsideClick() throws {
         let app = makeApp()
         app.terminateIfRunning()
