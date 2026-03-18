@@ -34,6 +34,7 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertEqual(deckNameField.currentStringValue, "Untitled Deck 3")
 
         deleteDeckButton.click()
+        confirmDeckDeletion(in: app)
         newDeckButton.click()
 
         XCTAssertEqual(deckNameField.currentStringValue, "Untitled Deck 4")
@@ -61,6 +62,7 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertEqual(deckNameField.currentStringValue, "Untitled Deck 3")
 
         deleteDeckButton.click()
+        confirmDeckDeletion(in: app)
 
         let settingsButton = window.buttons["sidebar-open-settings-button"]
         XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
@@ -114,6 +116,36 @@ final class ProxySmithUITests: XCTestCase {
 
         newDeckButton.click()
         XCTAssertEqual(deckNameField.currentStringValue, "Untitled Deck 3")
+    }
+
+    @MainActor
+    func testCancelingDeckDeletionKeepsSelectedDeck() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        XCTAssertTrue(app.mainWindow.waitForExistence(timeout: 10))
+        let window = libraryWindow(app)
+
+        let deckNameField = app.textFields["deck-name-field"]
+        let newDeckButton = window.buttons["sidebar-new-deck-button"]
+        let toolbarDeleteButton = app.buttons["toolbar-delete-deck-button"].firstMatch
+
+        XCTAssertTrue(newDeckButton.waitForExistence(timeout: 5))
+        XCTAssertTrue(toolbarDeleteButton.waitForExistence(timeout: 5))
+
+        newDeckButton.click()
+        XCTAssertTrue(deckNameField.waitForExistence(timeout: 5))
+        XCTAssertEqual(deckNameField.currentStringValue, "Untitled Deck 1")
+
+        newDeckButton.click()
+        XCTAssertEqual(deckNameField.currentStringValue, "Untitled Deck 2")
+
+        toolbarDeleteButton.click()
+        cancelDeckDeletion(in: app)
+
+        XCTAssertEqual(deckNameField.currentStringValue, "Untitled Deck 2")
     }
 
     @MainActor
@@ -324,6 +356,20 @@ final class ProxySmithUITests: XCTestCase {
 
         XCTFail("Expected main library window to exist")
         return app.windows.firstMatch
+    }
+
+    @MainActor
+    private func confirmDeckDeletion(in app: XCUIApplication) {
+        let deleteConfirmation = app.sheets.firstMatch.buttons["Delete Deck"]
+        XCTAssertTrue(deleteConfirmation.waitForExistence(timeout: 5))
+        deleteConfirmation.click()
+    }
+
+    @MainActor
+    private func cancelDeckDeletion(in app: XCUIApplication) {
+        let cancelConfirmation = app.sheets.firstMatch.buttons["Cancel"]
+        XCTAssertTrue(cancelConfirmation.waitForExistence(timeout: 5))
+        cancelConfirmation.click()
     }
 }
 
