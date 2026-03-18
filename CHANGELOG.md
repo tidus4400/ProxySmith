@@ -15,6 +15,7 @@
 
 ### Changed
 
+- Add-cards search results now use the same tighter card corners and click-to-preview zoom popovers as deck-list rows.
 - Deck deletion now asks for confirmation before removing the selected deck and its cards.
 - The sidebar `Delete Deck` button now uses an explicit filled destructive treatment so it stays visible against the glass panel.
 - Deck-list card preview popovers now render 40% larger with high-resolution art, open at their original framing, support pinch or `Command` + scroll zooming from that default view, and close when you click the same thumbnail again.

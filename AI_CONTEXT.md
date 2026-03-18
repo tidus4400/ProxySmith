@@ -69,6 +69,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   add-cards popover
   preview and export actions
   deck list with quantity control and click-to-preview card art that opens at its original framing, supports magnification gestures in the enlarged preview, and can be closed by clicking the same thumbnail again
+- Add-cards search results should use the same card-art corner treatment and click-to-preview zoom behavior as deck-list rows.
 - Settings window for app-level options such as deck numbering and card-image cache retention.
 - Search sheet for Scryfall-driven card lookup.
 
@@ -98,4 +99,5 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Update `CHANGELOG.md` before every commit. Treat it as part of the deliverable, not optional documentation.
 - Treat any user request to commit as an implicit request to refresh `CHANGELOG.md` and the relevant context files before creating the commit.
 - Keep confirmation around destructive deck deletion so users do not remove decks accidentally.
+- Keep deck-list and add-cards search card previews visually and behaviorally aligned.
 - If you change print math or Scryfall behavior, update this file.

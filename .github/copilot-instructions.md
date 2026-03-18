@@ -58,6 +58,8 @@ Services are injected via a custom environment value (`@Environment(\.appService
 
 **Glass-panel actions**: Important sidebar actions shown on glass surfaces should use explicit filled treatments when bordered buttons do not provide enough contrast.
 
+**Card previews**: Deck-list rows and add-cards search results should share the same thumbnail styling and zoomable preview behavior.
+
 **Deck deletion**: Deleting a deck must require explicit confirmation because the deck and all of its cards are removed together.
 
 **CHANGELOG.md**: Update it before every commit. It is part of the deliverable, not optional documentation.

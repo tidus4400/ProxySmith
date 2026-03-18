@@ -141,21 +141,25 @@ private struct SearchResultCardView: View {
     let wasAdded: Bool
     let onAdd: () -> Void
 
+    private var setLine: String {
+        "\(card.set.uppercased()) • \(card.collectorNumber) • \(card.rarity.capitalized)"
+    }
+
     var body: some View {
         HStack(spacing: 18) {
-            CachedCardAsyncImage(url: card.previewImageURL) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(.white.opacity(0.08))
-                    .overlay {
-                        ProgressView()
-                    }
-            }
-            .frame(width: 82, height: 114)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            CardPreviewButton(
+                previewImageURL: card.previewImageURL,
+                enlargedImageURL: card.printImageURL,
+                title: card.displayName,
+                typeLine: card.displayTypeLine,
+                setLine: setLine,
+                thumbnailWidth: 84,
+                thumbnailHeight: 116,
+                accessibilityLabel: "Preview \(card.displayName)",
+                buttonAccessibilityIdentifier: "search-card-preview-button-\(card.id)",
+                panelAccessibilityIdentifier: "search-card-preview-panel-\(card.id)",
+                titleAccessibilityIdentifier: "search-card-preview-title-\(card.id)"
+            )
 
             VStack(alignment: .leading, spacing: 8) {
                 Text(card.displayName)
@@ -174,7 +178,7 @@ private struct SearchResultCardView: View {
                         .foregroundStyle(.white.opacity(0.72))
                 }
 
-                Text("\(card.set.uppercased()) • \(card.collectorNumber) • \(card.rarity.capitalized)")
+                Text(setLine)
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.62))
             }
@@ -188,6 +192,8 @@ private struct SearchResultCardView: View {
             .buttonStyle(.borderedProminent)
             .tint(wasAdded ? Color(red: 0.33, green: 0.76, blue: 0.73) : Color(red: 0.95, green: 0.55, blue: 0.28))
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("search-card-row-\(card.id)")
         .glassPanel(cornerRadius: 26, padding: 16)
     }
 }

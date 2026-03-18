@@ -46,6 +46,19 @@ actor ScryfallClient {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.count >= 2 else { return [] }
 
+        if LaunchConfiguration.shouldSeedSearchResults {
+            let normalizedQuery = trimmed.lowercased()
+            return LaunchConfiguration.makeUITestSearchResults().filter { card in
+                [
+                    card.displayName,
+                    card.displayTypeLine,
+                    card.set,
+                    card.setName,
+                    card.collectorNumber
+                ].contains { $0.lowercased().contains(normalizedQuery) }
+            }
+        }
+
         do {
             let response: ScryfallSearchResponse = try await request(
                 path: "/cards/search",
@@ -90,4 +103,3 @@ actor ScryfallClient {
         return try decoder.decode(T.self, from: data)
     }
 }
-

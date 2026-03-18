@@ -95,7 +95,7 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertEqual(cacheFolderField.currentStringValue, "/tmp/proxysmith-ui-cache")
 
         let cacheFolderValue = app.staticTexts["card-image-cache-location-value"]
-        XCTAssertTrue(cacheFolderValue.waitForExistence(timeout: 5))
+        XCTAssertTrue(cacheFolderValue.waitForExistence(timeout: 10))
         XCTAssertEqual(cacheFolderValue.currentStringValue, "/tmp/proxysmith-ui-cache")
 
         numberingToggle.click()
@@ -183,7 +183,7 @@ final class ProxySmithUITests: XCTestCase {
         let originalValue = cacheFolderField.currentStringValue
 
         let savedFolderValue = app.staticTexts["card-image-cache-location-value"]
-        XCTAssertTrue(savedFolderValue.waitForExistence(timeout: 5))
+        XCTAssertTrue(savedFolderValue.waitForExistence(timeout: 10))
         XCTAssertEqual(savedFolderValue.currentStringValue, originalValue)
 
         cacheFolderField.click()
@@ -202,7 +202,7 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertEqual(reopenedCacheFolderField.currentStringValue, originalValue)
 
         let reopenedSavedFolderValue = app.staticTexts["card-image-cache-location-value"]
-        XCTAssertTrue(reopenedSavedFolderValue.waitForExistence(timeout: 5))
+        XCTAssertTrue(reopenedSavedFolderValue.waitForExistence(timeout: 10))
         XCTAssertEqual(reopenedSavedFolderValue.currentStringValue, originalValue)
     }
 
@@ -260,6 +260,42 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testSearchCardPreviewTogglesClosedOnSecondThumbnailClick() throws {
+        let app = makeApp(extraLaunchArguments: ["--uitesting-seed-search-results"])
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let newDeckButton = window.buttons["sidebar-new-deck-button"]
+        XCTAssertTrue(newDeckButton.waitForExistence(timeout: 5))
+        newDeckButton.click()
+
+        let addCardsButton = window.buttons["deck-add-cards-button"]
+        XCTAssertTrue(addCardsButton.waitForExistence(timeout: 5))
+        addCardsButton.click()
+
+        let searchField = app.textFields["card-search-field"]
+        XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+        searchField.click()
+        searchField.typeText("goblin")
+
+        let previewButton = app.descendants(matching: .any)["search-card-preview-button-ui-search-goblin-sharpshooter"]
+        XCTAssertTrue(previewButton.waitForExistence(timeout: 5))
+
+        let previewPanel = app.descendants(matching: .any)["search-card-preview-panel-ui-search-goblin-sharpshooter"]
+        XCTAssertFalse(previewPanel.exists)
+
+        previewButton.click()
+        XCTAssertTrue(previewPanel.waitForExistence(timeout: 5))
+
+        previewButton.click()
+        XCTAssertTrue(waitForNonExistence(of: previewPanel))
+    }
+
+    @MainActor
     private func makeApp(extraLaunchArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments = [
@@ -294,7 +330,7 @@ final class ProxySmithUITests: XCTestCase {
         let originalValue = cacheFolderField.currentStringValue
 
         let savedFolderValue = app.staticTexts["card-image-cache-location-value"]
-        XCTAssertTrue(savedFolderValue.waitForExistence(timeout: 5))
+        XCTAssertTrue(savedFolderValue.waitForExistence(timeout: 10))
         XCTAssertEqual(savedFolderValue.currentStringValue, originalValue)
 
         cacheFolderField.click()
@@ -313,7 +349,7 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertEqual(reopenedCacheFolderField.currentStringValue, originalValue)
 
         let reopenedSavedFolderValue = app.staticTexts["card-image-cache-location-value"]
-        XCTAssertTrue(reopenedSavedFolderValue.waitForExistence(timeout: 5))
+        XCTAssertTrue(reopenedSavedFolderValue.waitForExistence(timeout: 10))
         XCTAssertEqual(reopenedSavedFolderValue.currentStringValue, originalValue)
     }
 

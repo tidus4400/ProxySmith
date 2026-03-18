@@ -34,6 +34,7 @@
 		BA111B187E2F172E0B26D72C /* CardSearchSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFF5E731724C9919409110C /* CardSearchSheet.swift */; };
 		D1C5FEE5C8BD1CDAB934724C /* CachedCardAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB884DD1A22376222EF77FC4 /* CachedCardAsyncImage.swift */; };
 		D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD831C6C3DA6A14B9135B71 /* ContentView.swift */; };
+		D85264B6B4EB9462395AF224 /* CardPreviewButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB96A37299C73A0AE420EBAD /* CardPreviewButton.swift */; };
 		DA55102254A658852DB4B5DC /* AppBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305761C33A2039F87AE36282 /* AppBackgroundView.swift */; };
 		DD72405AC9271BF3CECA5F83 /* DeckCardRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */; };
 		DEA2A40A7160EA0DB02F057F /* ProxySmithStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96469834639BD0B9DD566377 /* ProxySmithStorage.swift */; };
@@ -95,6 +96,7 @@
 		D5E6966FEFAAF53F8E782878 /* AppPreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesTests.swift; sourceTree = "<group>"; };
 		DFD831C6C3DA6A14B9135B71 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E8E6DDACFC1987B6E22B48C4 /* CardImageRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardImageRepositoryTests.swift; sourceTree = "<group>"; };
+		EB96A37299C73A0AE420EBAD /* CardPreviewButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPreviewButton.swift; sourceTree = "<group>"; };
 		F10E21A8A526FDE90521C966 /* ProxySmithTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProxySmithTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -144,6 +146,7 @@
 			isa = PBXGroup;
 			children = (
 				BB884DD1A22376222EF77FC4 /* CachedCardAsyncImage.swift */,
+				EB96A37299C73A0AE420EBAD /* CardPreviewButton.swift */,
 				2AFF5E731724C9919409110C /* CardSearchSheet.swift */,
 				45C5C61FAB969F3FC339D0CB /* DeckCardRowView.swift */,
 				B88E45B306564718B2A3EEBC /* DeckSidebarView.swift */,
@@ -329,6 +332,7 @@
 				655243FA03870EAFC25C3B1A /* AppServices.swift in Sources */,
 				D1C5FEE5C8BD1CDAB934724C /* CachedCardAsyncImage.swift in Sources */,
 				18035E843409066E5CB3069A /* CardImageRepository.swift in Sources */,
+				D85264B6B4EB9462395AF224 /* CardPreviewButton.swift in Sources */,
 				BA111B187E2F172E0B26D72C /* CardSearchSheet.swift in Sources */,
 				D64454CEB88F176BD79A6BBF /* ContentView.swift in Sources */,
 				5ADD708BF03DD543FFFDAD85 /* Deck.swift in Sources */,
