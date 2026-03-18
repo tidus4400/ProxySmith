@@ -61,6 +61,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 ## Current UX Shape
 
 - Sidebar for deck library.
+- Sidebar actions that sit on glass surfaces should use explicit filled treatments whenever bordered chrome does not create enough contrast for reliable visibility.
 - Main deck workspace with:
   editable name
   scale slider
