@@ -22,4 +22,24 @@ struct LaunchConfigurationTests {
         #expect(cardsByName["Serra Angel"]?.printImageURL?.isFileURL == true)
         #expect(cardsByName["Serra Angel"]?.previewImageURL.map { FileManager.default.fileExists(atPath: $0.path) } == true)
     }
+
+    @Test
+    func uiTestSearchResultsUseLocalFixtureImages() {
+        let results = LaunchConfiguration.makeUITestSearchResults()
+        let resultsByID = Dictionary(uniqueKeysWithValues: results.map { ($0.id, $0) })
+
+        #expect(results.count == 2)
+        #expect(resultsByID["ui-search-goblin-sharpshooter"]?.displayName == "Goblin Sharpshooter")
+        #expect(resultsByID["ui-search-goblin-sharpshooter"]?.previewImageURL?.isFileURL == true)
+        #expect(resultsByID["ui-search-goblin-sharpshooter"]?.printImageURL?.isFileURL == true)
+        #expect(resultsByID["ui-search-goblin-sharpshooter"]?.previewImageURL.map {
+            FileManager.default.fileExists(atPath: $0.path)
+        } == true)
+        #expect(resultsByID["ui-search-serra-angel"]?.displayName == "Serra Angel")
+        #expect(resultsByID["ui-search-serra-angel"]?.previewImageURL?.isFileURL == true)
+        #expect(resultsByID["ui-search-serra-angel"]?.printImageURL?.isFileURL == true)
+        #expect(resultsByID["ui-search-serra-angel"]?.previewImageURL.map {
+            FileManager.default.fileExists(atPath: $0.path)
+        } == true)
+    }
 }

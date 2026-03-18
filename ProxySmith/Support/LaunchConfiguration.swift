@@ -5,6 +5,7 @@ enum LaunchConfiguration {
     static let isUITesting = ProcessInfo.processInfo.arguments.contains("--uitesting")
     static let shouldResetState = ProcessInfo.processInfo.arguments.contains("--uitesting-reset-state")
     static let shouldSeedSampleDeck = ProcessInfo.processInfo.arguments.contains("--uitesting-seed-sample-deck")
+    static let shouldSeedSearchResults = ProcessInfo.processInfo.arguments.contains("--uitesting-seed-search-results")
     static let isRunningAutomatedTests =
         isUITesting || ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
 
@@ -78,6 +79,33 @@ enum LaunchConfiguration {
         return deck
     }
 
+    static func makeUITestSearchResults() -> [ScryfallCard] {
+        [
+            makeUITestSearchCard(
+                id: "ui-search-goblin-sharpshooter",
+                name: "Goblin Sharpshooter",
+                set: "ons",
+                setName: "Onslaught",
+                collectorNumber: "206",
+                manaCost: "{2}{R}",
+                typeLine: "Creature — Goblin",
+                rarity: "rare",
+                imageURIs: uiTestFixtureImageURIs(named: "goblin-sharpshooter.png")
+            ),
+            makeUITestSearchCard(
+                id: "ui-search-serra-angel",
+                name: "Serra Angel",
+                set: "fdn",
+                setName: "Foundations",
+                collectorNumber: "30",
+                manaCost: "{3}{W}{W}",
+                typeLine: "Creature — Angel",
+                rarity: "uncommon",
+                imageURIs: uiTestFixtureImageURIs(named: "serra-angel.png")
+            )
+        ]
+    }
+
     private static func makeUITestCard(
         scryfallID: String,
         name: String,
@@ -103,6 +131,41 @@ enum LaunchConfiguration {
             quantity: quantity,
             previewImageURLString: previewImageURLString,
             printImageURLString: printImageURLString
+        )
+    }
+
+    private static func makeUITestSearchCard(
+        id: String,
+        name: String,
+        set: String,
+        setName: String,
+        collectorNumber: String,
+        manaCost: String,
+        typeLine: String,
+        rarity: String,
+        imageURIs: ScryfallCard.ImageURIs
+    ) -> ScryfallCard {
+        ScryfallCard(
+            id: id,
+            name: name,
+            set: set,
+            setName: setName,
+            collectorNumber: collectorNumber,
+            manaCost: manaCost,
+            typeLine: typeLine,
+            rarity: rarity,
+            imageUris: imageURIs,
+            cardFaces: nil
+        )
+    }
+
+    private static func uiTestFixtureImageURIs(named filename: String) -> ScryfallCard.ImageURIs {
+        let url = uiTestFixtureURL(named: filename)
+        return ScryfallCard.ImageURIs(
+            png: url,
+            large: url,
+            normal: url,
+            small: url
         )
     }
 
