@@ -10,6 +10,7 @@ struct ContentView: View {
     private var decks: [Deck]
 
     @State private var selectedDeck: Deck?
+    @State private var pendingDeckDeletion: Deck?
 
     var body: some View {
         NavigationSplitView {
@@ -17,7 +18,7 @@ struct ContentView: View {
                 decks: decks,
                 selectedDeck: $selectedDeck,
                 onCreateDeck: createDeck,
-                onDeleteSelectedDeck: deleteSelectedDeck,
+                onDeleteSelectedDeck: requestDeleteSelectedDeck,
                 onOpenSettings: { openSettings() }
             )
             .navigationSplitViewColumnWidth(min: 280, ideal: 320)
@@ -39,7 +40,7 @@ struct ContentView: View {
                 }
                 .accessibilityIdentifier("toolbar-new-deck-button")
 
-                Button(role: .destructive, action: deleteSelectedDeck) {
+                Button(role: .destructive, action: requestDeleteSelectedDeck) {
                     Label("Delete Deck", systemImage: "trash")
                 }
                 .accessibilityIdentifier("toolbar-delete-deck-button")
@@ -50,6 +51,23 @@ struct ContentView: View {
                 }
                 .accessibilityIdentifier("toolbar-open-settings-button")
             }
+        }
+        .confirmationDialog(
+            "Delete \"\(pendingDeckDeletion?.name ?? "Deck")\"?",
+            isPresented: Binding(
+                get: { pendingDeckDeletion != nil },
+                set: { if $0 == false { pendingDeckDeletion = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete Deck", role: .destructive) {
+                confirmDeleteSelectedDeck()
+            }
+            Button("Cancel", role: .cancel) {
+                pendingDeckDeletion = nil
+            }
+        } message: {
+            Text("\(pendingDeckDeletion?.name ?? "This deck") and all of its cards will be removed from ProxySmith.")
         }
         .onAppear {
             seedUITestDeckIfNeeded()
@@ -84,11 +102,23 @@ struct ContentView: View {
         selectedDeck = deck
     }
 
-    private func deleteSelectedDeck() {
+    private func requestDeleteSelectedDeck() {
         guard let selectedDeck else { return }
-        modelContext.delete(selectedDeck)
+        pendingDeckDeletion = selectedDeck
+    }
+
+    private func confirmDeleteSelectedDeck() {
+        guard let pendingDeckDeletion else { return }
+        guard decks.contains(pendingDeckDeletion) else {
+            self.pendingDeckDeletion = nil
+            return
+        }
+
+        let nextSelectedDeck = decks.first(where: { $0.id != pendingDeckDeletion.id })
+        modelContext.delete(pendingDeckDeletion)
         try? modelContext.save()
-        self.selectedDeck = decks.first(where: { $0.id != selectedDeck.id })
+        selectedDeck = nextSelectedDeck
+        self.pendingDeckDeletion = nil
     }
 
     private func seedUITestDeckIfNeeded() {

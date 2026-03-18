@@ -62,6 +62,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 
 - Sidebar for deck library.
 - Sidebar actions that sit on glass surfaces should use explicit filled treatments whenever bordered chrome does not create enough contrast for reliable visibility.
+- Deck deletion requires confirmation before removing the selected deck and its cards.
 - Main deck workspace with:
   editable name
   scale slider
@@ -96,4 +97,5 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Run `xcodebuild -scheme ProxySmith -destination 'platform=macOS' test` before handing off when changes affect app behavior, persistence, or UI flows.
 - Update `CHANGELOG.md` before every commit. Treat it as part of the deliverable, not optional documentation.
 - Treat any user request to commit as an implicit request to refresh `CHANGELOG.md` and the relevant context files before creating the commit.
+- Keep confirmation around destructive deck deletion so users do not remove decks accidentally.
 - If you change print math or Scryfall behavior, update this file.
