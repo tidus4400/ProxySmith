@@ -56,6 +56,8 @@ Services are injected via a custom environment value (`@Environment(\.appService
 
 **Accessibility identifiers**: All interactive UI elements must have `.accessibilityIdentifier(...)` set — the UI test suite depends on them.
 
+**Glass-panel actions**: Important sidebar actions shown on glass surfaces should use explicit filled treatments when bordered buttons do not provide enough contrast.
+
 **CHANGELOG.md**: Update it before every commit. It is part of the deliverable, not optional documentation.
 
 **Native-first**: No new dependencies without strong justification. Prefer SwiftUI, SwiftData, and Apple frameworks.

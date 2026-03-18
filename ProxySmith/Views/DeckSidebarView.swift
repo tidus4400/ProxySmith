@@ -47,7 +47,8 @@ struct DeckSidebarView: View {
                             Label("Delete Deck", systemImage: "trash")
                                 .frame(maxWidth: .infinity)
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.borderedProminent)
+                        .tint(Color(red: 0.84, green: 0.29, blue: 0.31))
                         .accessibilityIdentifier("sidebar-delete-deck-button")
                         .disabled(selectedDeck == nil)
 

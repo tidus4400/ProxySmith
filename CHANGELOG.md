@@ -15,6 +15,7 @@
 
 ### Changed
 
+- The sidebar `Delete Deck` button now uses an explicit filled destructive treatment so it stays visible against the glass panel.
 - Deck-list card preview popovers now render 40% larger with high-resolution art, open at their original framing, support pinch or `Command` + scroll zooming from that default view, and close when you click the same thumbnail again.
 - PDF cut guides now render outside the card frame and continue the exact rectangular trim-edge trajectory instead of using an inset heuristic.
 - Preview Sheets now uses an explicit filled treatment so it stays visible against the glass panel.
