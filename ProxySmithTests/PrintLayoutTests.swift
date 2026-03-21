@@ -38,4 +38,71 @@ struct PrintLayoutTests {
             #expect(page.contains(frame))
         }
     }
+
+    @Test
+    func zeroBleedPlacementsPreserveExistingTrimGeometry() {
+        let legacyFrames = PrintLayout.cardFrames(scalePercent: 100)
+        let placements = PrintLayout.cardPlacements(scalePercent: 100, bleedMillimeters: 0)
+
+        #expect(placements.map(\.trimRect) == legacyFrames)
+
+        for placement in placements {
+            #expect(placement.artworkRect == placement.trimRect)
+        }
+    }
+
+    @Test
+    func maximumBleedPlacementsStillFitOnA4AtFullScale() {
+        let placements = PrintLayout.cardPlacements(
+            scalePercent: 100,
+            bleedMillimeters: PrintLayout.maximumBleedMillimeters
+        )
+        let page = CGRect(origin: .zero, size: PrintLayout.a4PageSize)
+
+        #expect(placements.count == PrintLayout.cardsPerPage)
+
+        for placement in placements {
+            #expect(page.contains(placement.trimRect))
+            #expect(page.contains(placement.artworkRect))
+        }
+    }
+
+    @Test
+    func trimAndArtworkRectsRespectBleedGutters() {
+        let placements = PrintLayout.cardPlacements(scalePercent: 100, bleedMillimeters: 2)
+        let tolerance: CGFloat = 0.0001
+
+        for placement in placements {
+            #expect(placement.artworkRect.contains(placement.trimRect))
+        }
+
+        for lhsIndex in placements.indices {
+            for rhsIndex in placements.indices where lhsIndex < rhsIndex {
+                let intersection = placements[lhsIndex].artworkRect.intersection(placements[rhsIndex].artworkRect)
+                if intersection.isNull == false {
+                    #expect(intersection.width <= tolerance || intersection.height <= tolerance)
+                }
+            }
+        }
+    }
+
+    @Test
+    func bleedCreatesMatchingSharedGapBetweenAdjacentTrimRects() {
+        let bleedMillimeters = 2.0
+        let placements = PrintLayout.cardPlacements(scalePercent: 100, bleedMillimeters: bleedMillimeters)
+        let expectedGap = PrintLayout.bleedPoints(from: bleedMillimeters) * 2
+        let tolerance: CGFloat = 0.0001
+
+        let topLeft = placements[0]
+        let topMiddle = placements[1]
+        let middleLeft = placements[3]
+
+        let horizontalGap = topMiddle.trimRect.minX - topLeft.trimRect.maxX
+        let verticalGap = topLeft.trimRect.minY - middleLeft.trimRect.maxY
+
+        #expect(abs(horizontalGap - expectedGap) <= tolerance)
+        #expect(abs(verticalGap - expectedGap) <= tolerance)
+        #expect(abs((topLeft.artworkRect.maxX - topLeft.trimRect.maxX) - (expectedGap / 2)) <= tolerance)
+        #expect(abs((topMiddle.trimRect.minX - topMiddle.artworkRect.minX) - (expectedGap / 2)) <= tolerance)
+    }
 }

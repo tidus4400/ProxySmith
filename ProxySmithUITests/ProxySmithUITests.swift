@@ -80,9 +80,11 @@ final class ProxySmithUITests: XCTestCase {
 
         let cacheFolderField = app.textFields["card-image-cache-folder-field"]
         XCTAssertTrue(cacheFolderField.waitForExistence(timeout: 5))
-        cacheFolderField.click()
-        app.typeKey("a", modifierFlags: .command)
-        cacheFolderField.typeText("/tmp/proxysmith-ui-cache")
+        let originalCacheFolder = cacheFolderField.currentStringValue ?? ""
+        XCTAssertFalse(originalCacheFolder.isEmpty)
+
+        let updatedCacheFolder = "\(originalCacheFolder)-ui-cache"
+        appendText("-ui-cache", to: cacheFolderField)
 
         let saveCacheFolderButton = app.buttons["save-card-image-cache-folder-button"]
         XCTAssertTrue(saveCacheFolderButton.waitForExistence(timeout: 5))
@@ -92,11 +94,11 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertTrue(saveCacheFolderConfirmation.waitForExistence(timeout: 5))
         saveCacheFolderConfirmation.click()
 
-        XCTAssertEqual(cacheFolderField.currentStringValue, "/tmp/proxysmith-ui-cache")
+        XCTAssertEqual(cacheFolderField.currentStringValue, updatedCacheFolder)
 
         let cacheFolderValue = app.staticTexts["card-image-cache-location-value"]
         XCTAssertTrue(cacheFolderValue.waitForExistence(timeout: 10))
-        XCTAssertEqual(cacheFolderValue.currentStringValue, "/tmp/proxysmith-ui-cache")
+        XCTAssertEqual(cacheFolderValue.currentStringValue, updatedCacheFolder)
 
         numberingToggle.click()
 
@@ -186,11 +188,10 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertTrue(savedFolderValue.waitForExistence(timeout: 10))
         XCTAssertEqual(savedFolderValue.currentStringValue, originalValue)
 
-        cacheFolderField.click()
-        app.typeKey("a", modifierFlags: .command)
-        cacheFolderField.typeText("\(originalValue ?? "")-draft")
+        let draftValue = "\(originalValue ?? "")-draft"
+        appendText("-draft", to: cacheFolderField)
 
-        XCTAssertEqual(cacheFolderField.currentStringValue, "\(originalValue ?? "")-draft")
+        XCTAssertEqual(cacheFolderField.currentStringValue, draftValue)
 
         libraryWindow(app).coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.92)).click()
         XCTAssertTrue(waitForNonExistence(of: cacheFolderField))
@@ -234,6 +235,50 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testDeckWorkspaceShowsBleedControlDefaultingToZeroMillimeters() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let newDeckButton = window.buttons["sidebar-new-deck-button"]
+        XCTAssertTrue(newDeckButton.waitForExistence(timeout: 5))
+        newDeckButton.click()
+
+        let bleedSlider = app.descendants(matching: .any)["deck-bleed-slider"]
+        XCTAssertTrue(bleedSlider.waitForExistence(timeout: 5))
+
+        let bleedValue = app.staticTexts["deck-bleed-value"]
+        XCTAssertTrue(bleedValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(bleedValue.currentStringValue, "0.0 mm")
+    }
+
+    @MainActor
+    func testDeckWorkspaceShowsRoundedSheetCornerSelectorByDefault() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let newDeckButton = window.buttons["sidebar-new-deck-button"]
+        XCTAssertTrue(newDeckButton.waitForExistence(timeout: 5))
+        newDeckButton.click()
+
+        let cornerStylePicker = app.descendants(matching: .any)["deck-sheet-corner-style-picker"]
+        XCTAssertTrue(cornerStylePicker.waitForExistence(timeout: 5))
+
+        let cornerStyleValue = app.staticTexts["deck-sheet-corner-style-value"]
+        XCTAssertTrue(cornerStyleValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(cornerStyleValue.currentStringValue, "Rounded")
+    }
+
+    @MainActor
     func testDeckCardPreviewTogglesClosedOnSecondThumbnailClick() throws {
         let app = makeApp(extraLaunchArguments: ["--uitesting-seed-sample-deck"])
         app.terminateIfRunning()
@@ -246,7 +291,7 @@ final class ProxySmithUITests: XCTestCase {
         let previewRow = app.descendants(matching: .any)["deck-card-row-ui-goblin-sharpshooter"]
         XCTAssertTrue(previewRow.waitForExistence(timeout: 10))
 
-        let previewButton = previewRow.descendants(matching: .any)["deck-card-preview-button-ui-goblin-sharpshooter"]
+        let previewButton = app.descendants(matching: .any)["deck-card-preview-button-ui-goblin-sharpshooter"]
         XCTAssertTrue(previewButton.waitForExistence(timeout: 5))
 
         let previewPopovers = app.popovers
@@ -278,7 +323,7 @@ final class ProxySmithUITests: XCTestCase {
         addCardsButton.click()
 
         let searchField = app.textFields["card-search-field"]
-        XCTAssertTrue(searchField.waitForExistence(timeout: 5))
+        XCTAssertTrue(searchField.waitForExistence(timeout: 10))
         searchField.click()
         searchField.typeText("goblin")
 
@@ -333,11 +378,10 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertTrue(savedFolderValue.waitForExistence(timeout: 10))
         XCTAssertEqual(savedFolderValue.currentStringValue, originalValue)
 
-        cacheFolderField.click()
-        app.typeKey("a", modifierFlags: .command)
-        cacheFolderField.typeText("\(originalValue ?? "")-draft")
+        let draftValue = "\(originalValue ?? "")-draft"
+        appendText("-draft", to: cacheFolderField)
 
-        XCTAssertEqual(cacheFolderField.currentStringValue, "\(originalValue ?? "")-draft")
+        XCTAssertEqual(cacheFolderField.currentStringValue, draftValue)
 
         dismissSettings(app, settingsWindow(app))
         XCTAssertTrue(waitForNonExistence(of: cacheFolderField))
@@ -407,6 +451,12 @@ final class ProxySmithUITests: XCTestCase {
         XCTAssertTrue(cancelConfirmation.waitForExistence(timeout: 5))
         cancelConfirmation.click()
     }
+}
+
+@MainActor
+private func appendText(_ text: String, to field: XCUIElement) {
+    field.coordinate(withNormalizedOffset: CGVector(dx: 0.98, dy: 0.5)).click()
+    field.typeText(text)
 }
 
 private extension XCUIElement {

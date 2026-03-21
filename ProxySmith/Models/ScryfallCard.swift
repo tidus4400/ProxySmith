@@ -1,5 +1,18 @@
 import Foundation
 
+enum CardBorderColorName {
+    static let defaultValue = "black"
+
+    static func normalized(_ rawValue: String?) -> String {
+        guard let rawValue,
+              rawValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false else {
+            return defaultValue
+        }
+
+        return rawValue.lowercased()
+    }
+}
+
 struct ScryfallSearchResponse: Decodable {
     let data: [ScryfallCard]
 }
@@ -27,6 +40,7 @@ struct ScryfallCard: Decodable, Identifiable, Hashable {
     let manaCost: String?
     let typeLine: String?
     let rarity: String
+    var borderColor: String? = nil
     let imageUris: ImageURIs?
     let cardFaces: [CardFace]?
 
@@ -56,6 +70,10 @@ struct ScryfallCard: Decodable, Identifiable, Hashable {
 
     var displayTypeLine: String {
         cardFaces?.first?.typeLine ?? typeLine ?? ""
+    }
+
+    var normalizedBorderColorName: String {
+        CardBorderColorName.normalized(borderColor)
     }
 
     private func preferredImage(

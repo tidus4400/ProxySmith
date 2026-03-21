@@ -15,6 +15,7 @@ final class DeckCard {
     var quantity: Int
     var previewImageURLString: String
     var printImageURLString: String
+    var borderColorName: String = CardBorderColorName.defaultValue
     var addedAt: Date
     var deck: Deck?
 
@@ -31,6 +32,7 @@ final class DeckCard {
         quantity: Int = 1,
         previewImageURLString: String,
         printImageURLString: String,
+        borderColorName: String = CardBorderColorName.defaultValue,
         addedAt: Date = .now,
         deck: Deck? = nil
     ) {
@@ -46,6 +48,7 @@ final class DeckCard {
         self.quantity = quantity
         self.previewImageURLString = previewImageURLString
         self.printImageURLString = printImageURLString
+        self.borderColorName = CardBorderColorName.normalized(borderColorName)
         self.addedAt = addedAt
         self.deck = deck
     }
@@ -62,6 +65,7 @@ final class DeckCard {
             rarity: scryfallCard.rarity.capitalized,
             previewImageURLString: scryfallCard.previewImageURL?.absoluteString ?? "",
             printImageURLString: scryfallCard.printImageURL?.absoluteString ?? "",
+            borderColorName: scryfallCard.normalizedBorderColorName,
             deck: deck
         )
     }
@@ -79,7 +83,11 @@ final class DeckCard {
     }
 
     var exportCard: DeckExportCard {
-        DeckExportCard(name: name, imageURL: printImageURL ?? previewImageURL, quantity: quantity)
+        DeckExportCard(
+            name: name,
+            imageURL: printImageURL ?? previewImageURL,
+            quantity: quantity,
+            borderColorName: CardBorderColorName.normalized(borderColorName)
+        )
     }
 }
-

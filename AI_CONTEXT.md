@@ -10,7 +10,7 @@ The intended flow is:
 
 1. Create a deck.
 2. Add cards from Scryfall.
-3. Tune print scale.
+3. Tune print scale, bleed, and sheet corner style.
 4. Export A4 sheets as PDF for physical printing.
 
 The app should feel polished and Mac-native, not like a thin CRUD shell.
@@ -66,6 +66,8 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Main deck workspace with:
   editable name
   scale slider
+  bleed slider
+  sheet corner selector
   add-cards popover
   preview and export actions
   deck list with quantity control and click-to-preview card art that opens at its original framing, supports magnification gestures in the enlarged preview, and can be closed by clicking the same thumbnail again
@@ -76,8 +78,9 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 ## Known Constraints
 
 - Double-faced and special-layout cards currently use the first face image when root `image_uris` are absent.
-- Export currently renders the chosen face art with cut guides and a fixed 3x3 grid.
-- Export cut guides now sit outside the card frame and align to the exact rectangular trim-edge trajectory of the card frame, which keeps them consistent across the full supported print-scale range.
+- Export currently renders the chosen face art with a fixed 3x3 grid, deck-level bleed support, deck-level rounded or straight sheet corners, and cut guides.
+- Export bleed now samples each card image per edge when possible and uses those exact edge colors to fill the owned gap around the trim frame, blending corner bleed blocks from adjacent sampled sides; when image sampling is unavailable it falls back to Scryfall border-color metadata so adjacent cards still split the shared spacing half-and-half without moving cut guides off the trim line.
+- Export cut guides now sit outside the trim frame and align to the exact rectangular trim-edge trajectory of the card frame, even when bleed expands the surrounding per-card bleed bounds.
 - Search currently uses Scryfall search syntax directly rather than a curated autocomplete domain model.
 - PDF preview now renders from the same in-memory export pipeline as saved files, so preview and export should stay visually aligned.
 - UI launches can use `--uitesting-seed-sample-deck` to preload Goblin Sharpshooter and Serra Angel rows backed by local high-resolution PNG fixtures for deterministic preview/debug validation without live network dependence.
@@ -88,7 +91,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Deck import from pasted lists
 - Duplicate card collapsing and batch quantity editing
 - More print presets and paper sizes
-- Optional bleed/crop controls
+- Finer crop and registration controls
 
 ## Workflow Rules For Future Agents
 
@@ -100,4 +103,4 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Treat any user request to commit as an implicit request to refresh `CHANGELOG.md` and the relevant context files before creating the commit.
 - Keep confirmation around destructive deck deletion so users do not remove decks accidentally.
 - Keep deck-list and add-cards search card previews visually and behaviorally aligned.
-- If you change print math or Scryfall behavior, update this file.
+- If you change print math, bleed sampling, corner-style handling, border-color handling, or Scryfall behavior, update this file.
