@@ -72,4 +72,26 @@ struct ScryfallCardTests {
         #expect(card.previewImageURL?.absoluteString == "https://example.com/front-small.jpg")
         #expect(card.printImageURL?.absoluteString == "https://example.com/front.png")
     }
+
+    @Test
+    func deckCardCarriesNormalizedBorderColorIntoExportCard() {
+        let scryfallCard = ScryfallCard(
+            id: "3",
+            name: "Golden Proxy",
+            set: "tst",
+            setName: "Test Set",
+            collectorNumber: "7",
+            manaCost: "{3}",
+            typeLine: "Artifact",
+            rarity: "rare",
+            borderColor: "GoLd",
+            imageUris: nil,
+            cardFaces: nil
+        )
+
+        let deckCard = DeckCard(scryfallCard: scryfallCard)
+
+        #expect(deckCard.borderColorName == "gold")
+        #expect(deckCard.exportCard.borderColorName == "gold")
+    }
 }

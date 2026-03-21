@@ -9,14 +9,14 @@ struct ContentView: View {
     @Query(sort: [SortDescriptor(\Deck.updatedAt, order: .reverse)])
     private var decks: [Deck]
 
-    @State private var selectedDeck: Deck?
+    @State private var selectedDeckID: UUID?
     @State private var pendingDeckDeletion: Deck?
 
     var body: some View {
         NavigationSplitView {
             DeckSidebarView(
                 decks: decks,
-                selectedDeck: $selectedDeck,
+                selectedDeckID: $selectedDeckID,
                 onCreateDeck: createDeck,
                 onDeleteSelectedDeck: requestDeleteSelectedDeck,
                 onOpenSettings: { openSettings() }
@@ -71,17 +71,23 @@ struct ContentView: View {
         }
         .onAppear {
             seedUITestDeckIfNeeded()
-            if selectedDeck == nil {
-                selectedDeck = decks.first
+            if selectedDeckID == nil {
+                selectedDeckID = decks.first?.id
             }
         }
         .onChange(of: decks) { _, decks in
-            if let selectedDeck, decks.contains(selectedDeck) == false {
-                self.selectedDeck = decks.first
-            } else if self.selectedDeck == nil {
-                self.selectedDeck = decks.first
+            if let selectedDeckID,
+               decks.contains(where: { $0.id == selectedDeckID }) == false {
+                self.selectedDeckID = decks.first?.id
+            } else if self.selectedDeckID == nil {
+                self.selectedDeckID = decks.first?.id
             }
         }
+    }
+
+    private var selectedDeck: Deck? {
+        guard let selectedDeckID else { return nil }
+        return decks.first(where: { $0.id == selectedDeckID })
     }
 
     private func createDeck() {
@@ -99,7 +105,7 @@ struct ContentView: View {
             appPreferences.nextGlobalDeckNumber = generatedName.updatedNextGlobalDeckNumber
         }
 
-        selectedDeck = deck
+        selectedDeckID = deck.id
     }
 
     private func requestDeleteSelectedDeck() {
@@ -117,7 +123,7 @@ struct ContentView: View {
         let nextSelectedDeck = decks.first(where: { $0.id != pendingDeckDeletion.id })
         modelContext.delete(pendingDeckDeletion)
         try? modelContext.save()
-        selectedDeck = nextSelectedDeck
+        selectedDeckID = nextSelectedDeck?.id
         self.pendingDeckDeletion = nil
     }
 
@@ -127,6 +133,6 @@ struct ContentView: View {
         let deck = LaunchConfiguration.makeUITestSampleDeck()
         modelContext.insert(deck)
         try? modelContext.save()
-        selectedDeck = deck
+        selectedDeckID = deck.id
     }
 }

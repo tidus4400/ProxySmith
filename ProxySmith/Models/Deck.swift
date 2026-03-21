@@ -1,6 +1,22 @@
 import Foundation
 import SwiftData
 
+enum SheetCornerStyle: String, CaseIterable, Codable, Sendable {
+    case rounded
+    case straight
+
+    var displayName: String {
+        switch self {
+        case .rounded:
+            return "Rounded"
+        case .straight:
+            return "Straight"
+        }
+    }
+
+    static let defaultValue: SheetCornerStyle = .rounded
+}
+
 @Model
 final class Deck {
     var id: UUID
@@ -8,6 +24,8 @@ final class Deck {
     var createdAt: Date
     var updatedAt: Date
     var scalePercent: Double
+    var bleedMillimeters: Double = 0
+    var sheetCornerStyleRawValue: String = SheetCornerStyle.defaultValue.rawValue
 
     @Relationship(deleteRule: .cascade, inverse: \DeckCard.deck)
     var cards: [DeckCard]
@@ -17,14 +35,23 @@ final class Deck {
         name: String = "Untitled Deck",
         createdAt: Date = .now,
         updatedAt: Date = .now,
-        scalePercent: Double = 100
+        scalePercent: Double = 100,
+        bleedMillimeters: Double = 0,
+        sheetCornerStyle: SheetCornerStyle = .rounded
     ) {
         self.id = id
         self.name = name
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.scalePercent = scalePercent
+        self.bleedMillimeters = bleedMillimeters
+        self.sheetCornerStyleRawValue = sheetCornerStyle.rawValue
         self.cards = []
+    }
+
+    var sheetCornerStyle: SheetCornerStyle {
+        get { SheetCornerStyle(rawValue: sheetCornerStyleRawValue) ?? .rounded }
+        set { sheetCornerStyleRawValue = newValue.rawValue }
     }
 
     var sortedCards: [DeckCard] {
@@ -45,6 +72,8 @@ final class Deck {
         DeckExportSnapshot(
             deckName: name,
             scalePercent: scalePercent,
+            bleedMillimeters: bleedMillimeters,
+            sheetCornerStyle: sheetCornerStyle,
             cards: sortedCards.map { $0.exportCard }
         )
     }
@@ -65,4 +94,3 @@ final class Deck {
         touch()
     }
 }
-

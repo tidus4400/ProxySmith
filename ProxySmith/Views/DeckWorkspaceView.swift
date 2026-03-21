@@ -89,6 +89,63 @@ struct DeckWorkspaceView: View {
                         .foregroundStyle(.secondary)
                 }
 
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text("Bleed")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        Spacer()
+                        Text(bleedValueText)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .accessibilityIdentifier("deck-bleed-value")
+                    }
+
+                    Slider(
+                        value: Binding(
+                            get: { deck.bleedMillimeters },
+                            set: { deck.bleedMillimeters = roundBleed($0) }
+                        ),
+                        in: 0 ... PrintLayout.maximumBleedMillimeters,
+                        step: 0.1
+                    )
+                    .tint(Color(red: 0.33, green: 0.76, blue: 0.73))
+                    .accessibilityIdentifier("deck-bleed-slider")
+
+                    Text("Adds 0.0 mm to 2.0 mm of edge-matched bleed on every side so neighboring cards split the gap with their own sampled border colors while cut guides stay on the final trim line.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text("Sheet Corners")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        Spacer()
+                        Text(deck.sheetCornerStyle.displayName)
+                            .foregroundStyle(.secondary)
+                            .accessibilityIdentifier("deck-sheet-corner-style-value")
+                    }
+
+                    Picker(
+                        "Sheet Corners",
+                        selection: Binding(
+                            get: { deck.sheetCornerStyle },
+                            set: { deck.sheetCornerStyle = $0 }
+                        )
+                    ) {
+                        ForEach(SheetCornerStyle.allCases, id: \.self) { style in
+                            Text(style.displayName)
+                                .tag(style)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("deck-sheet-corner-style-picker")
+
+                    Text("Choose whether cards keep rounded source-style corners on the sheet or render with straight corners in preview and export.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
                 VStack(spacing: 10) {
                     Button {
                         isShowingPreviewSheet = true
@@ -133,6 +190,12 @@ struct DeckWorkspaceView: View {
             deck.touch()
         }
         .onChange(of: deck.scalePercent) { _, _ in
+            deck.touch()
+        }
+        .onChange(of: deck.bleedMillimeters) { _, _ in
+            deck.touch()
+        }
+        .onChange(of: deck.sheetCornerStyleRawValue) { _, _ in
             deck.touch()
         }
     }
@@ -210,6 +273,19 @@ struct DeckWorkspaceView: View {
                 .font(.system(size: 16, weight: .bold, design: .rounded))
         }
         .foregroundStyle(.primary)
+    }
+
+    private var bleedValueText: String {
+        String(
+            format: "%.1f mm",
+            locale: Locale(identifier: "en_US_POSIX"),
+            deck.bleedMillimeters
+        )
+    }
+
+    private func roundBleed(_ value: Double) -> Double {
+        let clampedValue = max(0, min(value, PrintLayout.maximumBleedMillimeters))
+        return (clampedValue * 10).rounded() / 10
     }
 
     private func removeCard(_ card: DeckCard) {

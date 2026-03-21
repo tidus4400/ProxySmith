@@ -4,6 +4,9 @@
 
 ### Added
 
+- Added a per-deck bleed slider from `0.0 mm` to `2.0 mm` that feeds both preview and PDF export.
+- Added a per-deck `Sheet Corners` selector so each sheet can render with rounded or straight card corners.
+- Added border-color propagation from Scryfall through deck export so black, white, gold, and other border styles can drive bleed rendering.
 - Added click-to-preview zoom popovers for deck-list card art.
 - Added deterministic sample-deck seeding for Goblin Sharpshooter and Serra Angel rows.
 - Added an in-app PDF sheet preview before export.
@@ -15,6 +18,9 @@
 
 ### Changed
 
+- Print layout math now separates trim and bleed bounds so cards stay physically spaced apart, shared bleed gaps split half-and-half per neighboring card, and cut guides stay on the final trim line.
+- PDF export bleed now samples real per-edge colors from each card image when available, blends corner bleed blocks from adjacent sampled edges, and falls back to Scryfall border-color metadata when image sampling is unavailable.
+- Deck selection now tracks stable deck IDs so workspace state and UI automation stay consistent while SwiftData refreshes live query results.
 - Add-cards search results now use the same tighter card corners and click-to-preview zoom popovers as deck-list rows.
 - Deck deletion now asks for confirmation before removing the selected deck and its cards.
 - The sidebar `Delete Deck` button now uses an explicit filled destructive treatment so it stays visible against the glass panel.

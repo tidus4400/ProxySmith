@@ -2,7 +2,7 @@ import SwiftUI
 
 struct DeckSidebarView: View {
     let decks: [Deck]
-    @Binding var selectedDeck: Deck?
+    @Binding var selectedDeckID: UUID?
     let onCreateDeck: () -> Void
     let onDeleteSelectedDeck: () -> Void
     let onOpenSettings: () -> Void
@@ -23,10 +23,10 @@ struct DeckSidebarView: View {
                 }
                 .glassPanel(cornerRadius: 30, padding: 20)
 
-                List(selection: $selectedDeck) {
+                List(selection: $selectedDeckID) {
                     ForEach(decks) { deck in
                         DeckSidebarRow(deck: deck)
-                            .tag(deck)
+                            .tag(deck.id)
                     }
                 }
                 .scrollContentBackground(.hidden)
@@ -50,7 +50,7 @@ struct DeckSidebarView: View {
                         .buttonStyle(.borderedProminent)
                         .tint(Color(red: 0.84, green: 0.29, blue: 0.31))
                         .accessibilityIdentifier("sidebar-delete-deck-button")
-                        .disabled(selectedDeck == nil)
+                        .disabled(selectedDeckID == nil)
 
                         Button(action: onOpenSettings) {
                             Label("Settings", systemImage: "gearshape.fill")
