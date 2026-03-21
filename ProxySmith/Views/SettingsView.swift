@@ -321,15 +321,18 @@ struct SettingsView: View {
     }
 }
 
-private final class SettingsWindowObserver {
+private final class SettingsWindowObserver: @unchecked Sendable {
     private weak var observedWindow: NSWindow?
     private var didResignKeyObserver: NSObjectProtocol?
     private var willCloseObserver: NSObjectProtocol?
+    private var onWindowAttached: () -> Void = {}
+    private var onWindowWillClose: () -> Void = {}
 
     deinit {
         detach()
     }
 
+    @MainActor
     func observe(
         window: NSWindow?,
         onWindowAttached: @escaping () -> Void,
@@ -338,26 +341,23 @@ private final class SettingsWindowObserver {
         guard observedWindow !== window else { return }
 
         detach()
+        self.onWindowAttached = onWindowAttached
+        self.onWindowWillClose = onWindowWillClose
         observedWindow = window
 
         guard let window else { return }
 
         onWindowAttached()
 
+        let observedWindowNumber = window.windowNumber
         didResignKeyObserver = NotificationCenter.default.addObserver(
             forName: NSWindow.didResignKeyNotification,
             object: window,
             queue: .main
-        ) { [weak self, weak window] _ in
-            guard let self, let window else { return }
-
-            if window.attachedSheet != nil {
-                return
-            }
-
-            Task { @MainActor [weak self, weak window] in
-                guard let self, let window else { return }
-                guard self.observedWindow === window else { return }
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                guard let self, let window = self.observedWindow else { return }
+                guard window.windowNumber == observedWindowNumber else { return }
                 guard window.attachedSheet == nil else { return }
                 window.close()
             }
@@ -368,8 +368,11 @@ private final class SettingsWindowObserver {
             object: window,
             queue: .main
         ) { [weak self] _ in
-            onWindowWillClose()
-            self?.detach()
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                self.onWindowWillClose()
+                self.detach()
+            }
         }
     }
 

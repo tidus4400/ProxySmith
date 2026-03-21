@@ -29,6 +29,7 @@
 - Preview Sheets now uses an explicit filled treatment so it stays visible against the glass panel.
 - Deck workspace print controls now group preview/export actions together, and the redundant card-scale metric is gone.
 - Add Cards now opens as a dismissable popover instead of a blocking sheet.
+- Settings window lifecycle observation now preserves its existing close/reset behavior while avoiding Swift sendability warnings in the AppKit bridge.
 - Deck list rows now show an explicit quantity badge and use tighter card corners to better match MTG card framing.
 - Untitled deck names now use explicit numeric suffixes.
 - Global deck numbering now behaves like a monotonic row ID when enabled, so deleting `Untitled Deck 6` still advances the next generated deck to `Untitled Deck 7`.
