@@ -31,6 +31,7 @@ struct SettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     headerPanel
+                    appearancePanel
                     numberingPanel
                     imageCachePanel
                 }
@@ -77,11 +78,48 @@ struct SettingsView: View {
                 .font(.system(size: 30, weight: .bold, design: .rounded))
                 .foregroundStyle(theme.palette.primaryText)
 
-            Text("Control ProxySmith’s deck numbering and how long Scryfall card images stay cached before the app refreshes them.")
+            Text("Control ProxySmith’s appearance, deck numbering, and how long Scryfall card images stay cached before the app refreshes them.")
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(theme.palette.secondaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .workshopPanel(.panel, cornerRadius: 22, padding: 22)
+    }
+
+    private var appearancePanel: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Appearance")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .foregroundStyle(theme.palette.primaryText)
+
+            Text("Choose whether ProxySmith follows macOS automatically or stays locked to a light or dark workspace.")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(theme.palette.secondaryText)
+
+            HStack(alignment: .top, spacing: 12) {
+                ForEach(AppAppearanceMode.allCases, id: \.self) { mode in
+                    appearanceModeButton(mode)
+                }
+            }
+
+            HStack(alignment: .top, spacing: 16) {
+                settingsMetric(
+                    title: "Saved Preference",
+                    value: appPreferences.appearanceMode.displayName,
+                    accessibilityIdentifier: "selected-appearance-mode-value"
+                )
+
+                settingsMetric(
+                    title: "Active Appearance",
+                    value: effectiveAppearanceMode.shortDisplayName,
+                    accessibilityIdentifier: "effective-appearance-mode-value"
+                )
+            }
+
+            Text("Sync with System updates both the library and Settings windows when macOS changes. Light and Dark override the system appearance immediately.")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(theme.palette.secondaryText)
+        }
         .workshopPanel(.panel, cornerRadius: 22, padding: 22)
     }
 
@@ -317,6 +355,54 @@ struct SettingsView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .workshopPanel(.raised, cornerRadius: 16, padding: 18)
+    }
+
+    private func appearanceModeButton(_ mode: AppAppearanceMode) -> some View {
+        let isSelected = appPreferences.appearanceMode == mode
+        let shape = RoundedRectangle(cornerRadius: 16, style: .continuous)
+
+        return Button {
+            appPreferences.appearanceMode = mode
+        } label: {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(mode.shortDisplayName)
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                    Spacer(minLength: 8)
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 15, weight: .semibold))
+                }
+
+                Text(mode.summary)
+                    .font(.system(size: 12, weight: .medium))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .foregroundStyle(isSelected ? Color.white : theme.palette.primaryText)
+            .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
+            .padding(16)
+            .background {
+                shape.fill(isSelected ? theme.palette.primaryAction : theme.palette.raisedPanel)
+            }
+            .overlay {
+                shape.stroke(
+                    isSelected ? theme.palette.primaryAction.opacity(0.92) : theme.palette.divider.opacity(0.85),
+                    lineWidth: 1
+                )
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("appearance-mode-\(mode.rawValue)-button")
+    }
+
+    private var effectiveAppearanceMode: AppAppearanceMode {
+        switch appPreferences.appearanceMode {
+        case .system:
+            colorScheme == .dark ? .dark : .light
+        case .light:
+            .light
+        case .dark:
+            .dark
+        }
     }
 
     private var theme: AppTheme {

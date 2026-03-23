@@ -32,6 +32,56 @@ struct AppPreferencesTests {
 
     @Test
     @MainActor
+    func appearanceModePersistsAcrossReload() throws {
+        let rootDirectory = temporaryRootDirectory()
+        let storageLayout = ProxySmithStorageLayout(rootDirectory: rootDirectory)
+
+        let preferences = AppPreferences(storageLayout: storageLayout)
+        preferences.appearanceMode = .dark
+
+        let reloaded = AppPreferences(storageLayout: storageLayout)
+
+        #expect(reloaded.appearanceMode == .dark)
+
+        try? FileManager.default.removeItem(at: rootDirectory)
+    }
+
+    @Test
+    @MainActor
+    func legacySettingsWithoutAppearanceModeKeepExistingValues() throws {
+        let rootDirectory = temporaryRootDirectory()
+        let storageLayout = ProxySmithStorageLayout(rootDirectory: rootDirectory)
+
+        try FileManager.default.createDirectory(
+            at: storageLayout.settingsDirectory,
+            withIntermediateDirectories: true
+        )
+
+        let legacyPayload = """
+        {
+          "globalDeckNumberingEnabled": false,
+          "nextGlobalDeckNumber": 12,
+          "cardImageCachePeriodDays": 14
+        }
+        """
+        try legacyPayload.write(
+            to: storageLayout.settingsFile,
+            atomically: true,
+            encoding: .utf8
+        )
+
+        let reloaded = AppPreferences(storageLayout: storageLayout)
+
+        #expect(reloaded.globalDeckNumberingEnabled == false)
+        #expect(reloaded.nextGlobalDeckNumber == 12)
+        #expect(reloaded.cardImageCachePeriodDays == 14)
+        #expect(reloaded.appearanceMode == .system)
+
+        try? FileManager.default.removeItem(at: rootDirectory)
+    }
+
+    @Test
+    @MainActor
     func resetCounterReturnsToOne() throws {
         let rootDirectory = temporaryRootDirectory()
         let storageLayout = ProxySmithStorageLayout(rootDirectory: rootDirectory)

@@ -1,11 +1,94 @@
 import Foundation
 import Observation
+import SwiftUI
+
+enum AppAppearanceMode: String, Codable, CaseIterable, Sendable {
+    case system
+    case light
+    case dark
+
+    var displayName: String {
+        switch self {
+        case .system:
+            "Sync with System"
+        case .light:
+            "Light"
+        case .dark:
+            "Dark"
+        }
+    }
+
+    var shortDisplayName: String {
+        switch self {
+        case .system:
+            "System"
+        case .light:
+            "Light"
+        case .dark:
+            "Dark"
+        }
+    }
+
+    var summary: String {
+        switch self {
+        case .system:
+            "Follow the current macOS appearance automatically."
+        case .light:
+            "Keep ProxySmith in its light print-studio palette."
+        case .dark:
+            "Keep ProxySmith in its dark workshop palette."
+        }
+    }
+
+    var preferredColorScheme: ColorScheme? {
+        switch self {
+        case .system:
+            nil
+        case .light:
+            .light
+        case .dark:
+            .dark
+        }
+    }
+}
 
 private struct AppPreferencesSnapshot: Codable {
     var globalDeckNumberingEnabled = true
     var nextGlobalDeckNumber = 1
     var cardImageCachePeriodDays = AppPreferences.defaultCardImageCachePeriodDays
     var cardImageCacheDirectoryPath: String?
+    var appearanceMode = AppAppearanceMode.system
+
+    private enum CodingKeys: String, CodingKey {
+        case globalDeckNumberingEnabled
+        case nextGlobalDeckNumber
+        case cardImageCachePeriodDays
+        case cardImageCacheDirectoryPath
+        case appearanceMode
+    }
+
+    init(
+        globalDeckNumberingEnabled: Bool = true,
+        nextGlobalDeckNumber: Int = 1,
+        cardImageCachePeriodDays: Int = AppPreferences.defaultCardImageCachePeriodDays,
+        cardImageCacheDirectoryPath: String? = nil,
+        appearanceMode: AppAppearanceMode = .system
+    ) {
+        self.globalDeckNumberingEnabled = globalDeckNumberingEnabled
+        self.nextGlobalDeckNumber = nextGlobalDeckNumber
+        self.cardImageCachePeriodDays = cardImageCachePeriodDays
+        self.cardImageCacheDirectoryPath = cardImageCacheDirectoryPath
+        self.appearanceMode = appearanceMode
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        globalDeckNumberingEnabled = try container.decodeIfPresent(Bool.self, forKey: .globalDeckNumberingEnabled) ?? true
+        nextGlobalDeckNumber = try container.decodeIfPresent(Int.self, forKey: .nextGlobalDeckNumber) ?? 1
+        cardImageCachePeriodDays = try container.decodeIfPresent(Int.self, forKey: .cardImageCachePeriodDays) ?? AppPreferences.defaultCardImageCachePeriodDays
+        cardImageCacheDirectoryPath = try container.decodeIfPresent(String.self, forKey: .cardImageCacheDirectoryPath)
+        appearanceMode = try container.decodeIfPresent(AppAppearanceMode.self, forKey: .appearanceMode) ?? .system
+    }
 }
 
 @MainActor
@@ -60,8 +143,18 @@ final class AppPreferences {
         }
     }
 
+    var appearanceMode: AppAppearanceMode {
+        didSet {
+            persist()
+        }
+    }
+
     var cardImageCacheLifetime: TimeInterval {
         TimeInterval(cardImageCachePeriodDays * 24 * 60 * 60)
+    }
+
+    var preferredColorScheme: ColorScheme? {
+        appearanceMode.preferredColorScheme
     }
 
     var settingsFileLocationDescription: String {
@@ -103,6 +196,7 @@ final class AppPreferences {
             snapshot.cardImageCacheDirectoryPath,
             defaultDirectory: storageLayout.cardImageCacheDirectory
         )
+        appearanceMode = snapshot.appearanceMode
 
         persist()
     }
@@ -140,7 +234,8 @@ final class AppPreferences {
             globalDeckNumberingEnabled: globalDeckNumberingEnabled,
             nextGlobalDeckNumber: nextGlobalDeckNumber,
             cardImageCachePeriodDays: cardImageCachePeriodDays,
-            cardImageCacheDirectoryPath: cardImageCacheDirectoryOverridePath
+            cardImageCacheDirectoryPath: cardImageCacheDirectoryOverridePath,
+            appearanceMode: appearanceMode
         )
 
         do {

@@ -121,6 +121,63 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testSettingsCanSelectAndPersistAppearanceMode() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let settingsButton = libraryWindow(app).buttons["sidebar-open-settings-button"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
+        settingsButton.click()
+
+        let selectedAppearanceValue = app.staticTexts["selected-appearance-mode-value"]
+        XCTAssertTrue(selectedAppearanceValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(selectedAppearanceValue.currentStringValue, "Sync with System")
+
+        let effectiveAppearanceValue = app.staticTexts["effective-appearance-mode-value"]
+        XCTAssertTrue(effectiveAppearanceValue.waitForExistence(timeout: 5))
+        XCTAssertTrue(["Light", "Dark"].contains(effectiveAppearanceValue.currentStringValue ?? ""))
+
+        let darkAppearanceButton = app.buttons["appearance-mode-dark-button"]
+        XCTAssertTrue(darkAppearanceButton.waitForExistence(timeout: 5))
+        darkAppearanceButton.click()
+
+        XCTAssertEqual(selectedAppearanceValue.currentStringValue, "Dark")
+        XCTAssertEqual(effectiveAppearanceValue.currentStringValue, "Dark")
+
+        let lightAppearanceButton = app.buttons["appearance-mode-light-button"]
+        XCTAssertTrue(lightAppearanceButton.waitForExistence(timeout: 5))
+        lightAppearanceButton.click()
+
+        XCTAssertEqual(selectedAppearanceValue.currentStringValue, "Light")
+        XCTAssertEqual(effectiveAppearanceValue.currentStringValue, "Light")
+
+        app.typeKey("w", modifierFlags: .command)
+        XCTAssertTrue(waitForNonExistence(of: selectedAppearanceValue))
+
+        libraryWindow(app).buttons["sidebar-open-settings-button"].click()
+
+        let reopenedSelectedAppearanceValue = app.staticTexts["selected-appearance-mode-value"]
+        XCTAssertTrue(reopenedSelectedAppearanceValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(reopenedSelectedAppearanceValue.currentStringValue, "Light")
+
+        let reopenedEffectiveAppearanceValue = app.staticTexts["effective-appearance-mode-value"]
+        XCTAssertTrue(reopenedEffectiveAppearanceValue.waitForExistence(timeout: 5))
+        XCTAssertEqual(reopenedEffectiveAppearanceValue.currentStringValue, "Light")
+
+        let systemAppearanceButton = app.buttons["appearance-mode-system-button"]
+        XCTAssertTrue(systemAppearanceButton.waitForExistence(timeout: 5))
+        systemAppearanceButton.click()
+
+        XCTAssertEqual(reopenedSelectedAppearanceValue.currentStringValue, "Sync with System")
+        XCTAssertTrue(["Light", "Dark"].contains(reopenedEffectiveAppearanceValue.currentStringValue ?? ""))
+    }
+
+    @MainActor
     func testCancelingDeckDeletionKeepsSelectedDeck() throws {
         let app = makeApp()
         app.terminateIfRunning()

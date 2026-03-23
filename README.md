@@ -10,7 +10,7 @@ ProxySmith is a native macOS app for building Magic: The Gathering proxy sheets.
 - Adjust quantities per card
 - Click deck-list and add-cards search-result images to inspect them at a larger high-resolution size, open them at the default framing, zoom them with pinch or `Command` + scroll, then click the same thumbnail again to close them
 - Choose a print scale from 80% to 100%, a per-deck bleed from 0.0 mm to 2.0 mm, and rounded or straight sheet corners
-- Configure untitled deck numbering and card-image cache retention in Settings
+- Configure the app-wide appearance mode, untitled deck numbering, and card-image cache retention in Settings
 - Preview print sheets before saving the PDF
 - Export print-ready A4 PDFs with 3x3 card layouts, exact edge-matched bleed spacing, optional rounded or straight sheet corners, and cut guides
 
@@ -50,5 +50,5 @@ xcodebuild -scheme ProxySmith -destination 'platform=macOS' test
 ## Notes
 
 - Scryfall API calls are serialized through a throttler and use a descriptive `User-Agent`.
-- Card images are cached on disk under `~/.proxysmith/cache/card-images`, and app preferences are stored at `~/.proxysmith/settings/preferences.json`.
+- Card images are cached on disk under `~/.proxysmith/cache/card-images`, and app preferences are stored at `~/.proxysmith/settings/preferences.json`, including the saved `Sync with System` / `Light` / `Dark` appearance choice.
 - PDF sizing is based on standard MTG dimensions: 2.5" x 3.5" at 72 DPI points, with optional per-deck bleed converted from millimeters into PDF points so neighboring cards separate cleanly and each half-gap inherits the sampled edge color of its neighboring card, falling back to Scryfall border-color metadata when no image sample is available.

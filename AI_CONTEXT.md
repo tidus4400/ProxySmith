@@ -44,7 +44,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - `ProxySmith/Support/GlassPanelModifier.swift`
   Semantic theme tokens plus shared surface, button, and input styling helpers.
 - `ProxySmith/Support/AppPreferences.swift`
-  Persistent app-level preferences, stored at `~/.proxysmith/settings/preferences.json`.
+  Persistent app-level preferences, including appearance mode, stored at `~/.proxysmith/settings/preferences.json`.
 - `ProxySmith/Utilities/DeckNameGenerator.swift`
   Canonical logic for untitled deck numbering and sequence handling.
 - `ProxySmith/Models/Deck.swift`
@@ -83,6 +83,10 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   deck list with quantity control and click-to-preview card art that opens at its original framing, supports magnification gestures in the enlarged preview, and can be closed by clicking the same thumbnail again
 - Add-cards search results should use the same card-art corner treatment and click-to-preview zoom behavior as deck-list rows.
 - Settings window for app-level options such as deck numbering and card-image cache retention.
+- Settings window also owns the app-wide appearance preference:
+  sync with system
+  force light
+  force dark
 - Search sheet for Scryfall-driven card lookup.
 
 ## Known Constraints
@@ -114,4 +118,5 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Keep confirmation around destructive deck deletion so users do not remove decks accidentally.
 - Keep deck-list and add-cards search card previews visually and behaviorally aligned.
 - Keep the reduced-glass theme direction intact; do not reintroduce layered glass cards as the default surface treatment.
+- Keep the app-wide appearance override flowing through shared preferences and scene-level color-scheme application rather than view-by-view overrides.
 - If you change print math, bleed sampling, corner-style handling, border-color handling, or Scryfall behavior, update this file.

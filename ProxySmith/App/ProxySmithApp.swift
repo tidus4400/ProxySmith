@@ -30,8 +30,10 @@ struct ProxySmithApp: App {
 
     var body: some Scene {
         Window("ProxySmith", id: "main") {
-            ContentView()
-                .environment(\.appServices, services)
+            AppAppearanceRootView {
+                ContentView()
+                    .environment(\.appServices, services)
+            }
                 .environment(appPreferences)
         }
         .modelContainer(modelContainer)
@@ -43,14 +45,31 @@ struct ProxySmithApp: App {
         }
 
         Settings {
-            SettingsView {
-                services = AppServices.live(
-                    storageLayout: storageLayout,
-                    preferredCardImageCacheDirectory: appPreferences.cardImageCacheDirectory
-                )
+            AppAppearanceRootView {
+                SettingsView {
+                    services = AppServices.live(
+                        storageLayout: storageLayout,
+                        preferredCardImageCacheDirectory: appPreferences.cardImageCacheDirectory
+                    )
+                }
             }
                 .environment(appPreferences)
         }
         .modelContainer(modelContainer)
+    }
+}
+
+private struct AppAppearanceRootView<Content: View>: View {
+    @Environment(AppPreferences.self) private var appPreferences
+
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .preferredColorScheme(appPreferences.preferredColorScheme)
     }
 }
