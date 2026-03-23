@@ -5,6 +5,7 @@ import SwiftUI
 struct PDFPreviewSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(AppPreferences.self) private var appPreferences
+    @Environment(\.colorScheme) private var colorScheme
 
     let snapshot: DeckExportSnapshot
     let pdfExportService: PDFExportService
@@ -22,25 +23,25 @@ struct PDFPreviewSheet: View {
                 Group {
                     if let previewData {
                         PDFDocumentView(data: previewData)
-                            .glassPanel(cornerRadius: 30, padding: 12)
+                            .workshopPanel(.stage, cornerRadius: 22, padding: 12)
                     } else if let errorMessage {
                         ContentUnavailableView(
                             "Preview Unavailable",
                             systemImage: "doc.text.magnifyingglass",
                             description: Text(errorMessage)
                         )
-                        .glassPanel(cornerRadius: 30, padding: 24)
+                        .workshopPanel(.panel, cornerRadius: 22, padding: 24)
                     } else {
                         VStack(spacing: 16) {
                             ProgressView()
                                 .controlSize(.large)
 
                             Text("Rendering sheet preview...")
-                                .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.white.opacity(0.82))
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundStyle(theme.palette.secondaryText)
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .glassPanel(cornerRadius: 30, padding: 24)
+                        .workshopPanel(.panel, cornerRadius: 22, padding: 24)
                     }
                 }
                 .padding(24)
@@ -86,6 +87,10 @@ struct PDFPreviewSheet: View {
         await MainActor.run {
             isLoading = false
         }
+    }
+
+    private var theme: AppTheme {
+        AppTheme(colorScheme)
     }
 }
 

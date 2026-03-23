@@ -5,6 +5,7 @@ struct CardSearchSheet: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(\.appServices) private var services
+    @Environment(\.colorScheme) private var colorScheme
 
     let deck: Deck
 
@@ -23,23 +24,23 @@ struct CardSearchSheet: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Add Cards")
                             .font(.system(size: 30, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(theme.palette.primaryText)
 
                         Text("Search by card name or Scryfall syntax. Results are throttled to stay API-friendly.")
-                            .font(.system(size: 14, weight: .medium, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.76))
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(theme.palette.secondaryText)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .glassPanel(cornerRadius: 30, padding: 20)
+                    .workshopPanel(.panel, cornerRadius: 22, padding: 20)
 
                     HStack(spacing: 12) {
                         Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.white.opacity(0.68))
+                            .foregroundStyle(theme.palette.secondaryText)
 
                         TextField("Search cards", text: $query)
                             .textFieldStyle(.plain)
-                            .font(.system(size: 18, weight: .medium, design: .rounded))
-                            .foregroundStyle(.white)
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(theme.palette.primaryText)
                             .accessibilityIdentifier("card-search-field")
 
                         if isSearching {
@@ -47,16 +48,14 @@ struct CardSearchSheet: View {
                                 .controlSize(.small)
                         }
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 14)
-                    .glassPanel(cornerRadius: 24, padding: 0)
+                    .workshopInputField(cornerRadius: 16, fillStyle: .raised)
 
                     if let errorMessage {
                         Text(errorMessage)
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.red)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(theme.palette.destructive)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .glassPanel(cornerRadius: 24, padding: 16)
+                            .workshopPanel(.raised, cornerRadius: 16, padding: 16)
                     }
 
                     Group {
@@ -82,7 +81,7 @@ struct CardSearchSheet: View {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .glassPanel(cornerRadius: 30, padding: 20)
+                    .workshopPanel(.panel, cornerRadius: 22, padding: 20)
                 }
                 .padding(24)
             }
@@ -134,9 +133,15 @@ struct CardSearchSheet: View {
         addedCardIDs.insert(card.id)
         try? modelContext.save()
     }
+
+    private var theme: AppTheme {
+        AppTheme(colorScheme)
+    }
 }
 
 private struct SearchResultCardView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let card: ScryfallCard
     let wasAdded: Bool
     let onAdd: () -> Void
@@ -164,23 +169,23 @@ private struct SearchResultCardView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(card.displayName)
                     .font(.system(size: 19, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(theme.palette.primaryText)
 
                 if card.displayManaCost.isEmpty == false {
                     Text(card.displayManaCost)
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.82))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(theme.palette.highlight)
                 }
 
                 if card.displayTypeLine.isEmpty == false {
                     Text(card.displayTypeLine)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.72))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(theme.palette.secondaryText)
                 }
 
                 Text(setLine)
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.62))
+                    .foregroundStyle(theme.palette.tertiaryText)
             }
 
             Spacer()
@@ -189,11 +194,14 @@ private struct SearchResultCardView: View {
                 Label(wasAdded ? "Added" : "Add", systemImage: wasAdded ? "checkmark.circle.fill" : "plus.circle.fill")
                     .frame(width: 120)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(wasAdded ? Color(red: 0.33, green: 0.76, blue: 0.73) : Color(red: 0.95, green: 0.55, blue: 0.28))
+            .appButtonStyle(wasAdded ? .support : .primary)
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("search-card-row-\(card.id)")
-        .glassPanel(cornerRadius: 26, padding: 16)
+        .workshopPanel(.raised, cornerRadius: 18, padding: 16)
+    }
+
+    private var theme: AppTheme {
+        AppTheme(colorScheme)
     }
 }

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct DeckCardRowView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     @Bindable var card: DeckCard
 
     let onDelete: () -> Void
@@ -25,38 +27,42 @@ struct DeckCardRowView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(card.name)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(theme.palette.primaryText)
 
                 if card.manaCost.isEmpty == false {
                     Text(card.manaCost)
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.82))
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(theme.palette.highlight)
                 }
 
                 if card.typeLine.isEmpty == false {
                     Text(card.typeLine)
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.72))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(theme.palette.secondaryText)
                         .lineLimit(2)
                 }
 
                 Text(card.setLine)
                     .font(.caption)
-                    .foregroundStyle(.white.opacity(0.62))
+                    .foregroundStyle(theme.palette.tertiaryText)
             }
 
             Spacer()
 
             VStack(alignment: .trailing, spacing: 10) {
                 Text("Qty \(card.quantity)x")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(theme.palette.primaryText)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(
                         Capsule(style: .continuous)
-                            .fill(.white.opacity(0.12))
+                            .fill(theme.palette.raisedPanel)
                     )
+                    .overlay {
+                        Capsule(style: .continuous)
+                            .stroke(theme.palette.divider.opacity(0.8), lineWidth: 1)
+                    }
                     .accessibilityIdentifier("deck-card-quantity-badge")
 
                 Stepper(value: Binding(
@@ -76,10 +82,14 @@ struct DeckCardRowView: View {
                 Image(systemName: "trash")
                     .font(.headline)
             }
-            .buttonStyle(.bordered)
+            .appButtonStyle(.tertiary)
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("deck-card-row-\(card.scryfallID)")
-        .glassPanel(cornerRadius: 26, padding: 16)
+        .workshopPanel(.raised, cornerRadius: 18, padding: 16)
+    }
+
+    private var theme: AppTheme {
+        AppTheme(colorScheme)
     }
 }

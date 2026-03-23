@@ -6,6 +6,7 @@ struct SettingsView: View {
     let onSaveCardImageCacheDirectory: () -> Void
 
     @Environment(AppPreferences.self) private var appPreferences
+    @Environment(\.colorScheme) private var colorScheme
 
     @Query(sort: [SortDescriptor(\Deck.createdAt, order: .forward)])
     private var decks: [Deck]
@@ -73,22 +74,22 @@ struct SettingsView: View {
     private var headerPanel: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Options")
-                .font(.system(size: 34, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .font(.system(size: 30, weight: .bold, design: .rounded))
+                .foregroundStyle(theme.palette.primaryText)
 
             Text("Control ProxySmith’s deck numbering and how long Scryfall card images stay cached before the app refreshes them.")
-                .font(.system(size: 15, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.78))
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(theme.palette.secondaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .glassPanel(cornerRadius: 32, padding: 24)
+        .workshopPanel(.panel, cornerRadius: 22, padding: 22)
     }
 
     private var numberingPanel: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("Deck Numbering")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(theme.palette.primaryText)
 
             Toggle(isOn: Binding(
                 get: { appPreferences.globalDeckNumberingEnabled },
@@ -96,19 +97,19 @@ struct SettingsView: View {
             )) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Use Global Deck Numbers")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(theme.palette.primaryText)
 
                     Text("Enabled: deleted untitled deck numbers are never reused. Disabled: ProxySmith fills the lowest missing number instead.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(theme.palette.secondaryText)
                 }
             }
             .toggleStyle(.switch)
             .accessibilityIdentifier("global-deck-numbering-toggle")
 
             Divider()
-                .overlay(.white.opacity(0.14))
+                .overlay(theme.palette.divider.opacity(0.7))
 
             HStack(alignment: .top, spacing: 16) {
                 settingsMetric(
@@ -129,23 +130,23 @@ struct SettingsView: View {
             }
 
             Text("Resetting the counter is safest after cleaning out old untitled decks. If numbered decks still exist, ProxySmith will continue above the highest reserved value.")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.68))
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(theme.palette.secondaryText)
 
             Button("Reset Deck Counter") {
                 isShowingResetAlert = true
             }
-            .buttonStyle(.bordered)
+            .appButtonStyle(.secondary)
             .accessibilityIdentifier("reset-deck-counter-button")
         }
-        .glassPanel(cornerRadius: 32, padding: 24)
+        .workshopPanel(.panel, cornerRadius: 22, padding: 22)
     }
 
     private var imageCachePanel: some View {
         VStack(alignment: .leading, spacing: 18) {
             Text("Card Image Cache")
                 .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundStyle(theme.palette.primaryText)
 
             Stepper(
                 value: Binding(
@@ -157,12 +158,12 @@ struct SettingsView: View {
                 HStack(alignment: .center, spacing: 18) {
                     VStack(alignment: .leading, spacing: 6) {
                         Text("Image Cache TTL")
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.white)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(theme.palette.primaryText)
 
                         Text("How long ProxySmith keeps downloaded Scryfall art before refreshing it from the network.")
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.7))
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(theme.palette.secondaryText)
                     }
 
                     Spacer(minLength: 12)
@@ -170,21 +171,20 @@ struct SettingsView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("\(appPreferences.cardImageCachePeriodDays)")
                             .font(.system(size: 34, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color(red: 0.98, green: 0.80, blue: 0.44))
+                            .foregroundStyle(theme.palette.highlight)
                             .monospacedDigit()
 
                         Text(appPreferences.cardImageCachePeriodDays == 1 ? "Day" : "Days")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.7))
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(theme.palette.secondaryText)
                     }
                 }
             }
-            .padding(18)
-            .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .workshopPanel(.raised, cornerRadius: 16, padding: 18)
             .accessibilityIdentifier("card-image-cache-period-stepper")
 
             Divider()
-                .overlay(.white.opacity(0.14))
+                .overlay(theme.palette.divider.opacity(0.7))
 
             imageCacheFolderEditor
 
@@ -208,10 +208,10 @@ struct SettingsView: View {
             }
 
             Text("Scryfall recommends caching downloaded data for at least 24 hours, and their gameplay updates are usually sparse enough that weekly refreshes are often sufficient. ProxySmith defaults to a 7 day TTL for card art, but you can tune it here.")
-                .font(.system(size: 13, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.68))
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(theme.palette.secondaryText)
         }
-        .glassPanel(cornerRadius: 32, padding: 24)
+        .workshopPanel(.panel, cornerRadius: 22, padding: 22)
     }
 
     private var imageCacheFolderEditor: some View {
@@ -219,12 +219,12 @@ struct SettingsView: View {
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Image Cache Folder")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(theme.palette.primaryText)
 
                     Text("Enter an absolute path or a `~/` path, then save and confirm the change.")
-                        .font(.system(size: 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.7))
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(theme.palette.secondaryText)
                 }
 
                 Spacer(minLength: 12)
@@ -232,23 +232,23 @@ struct SettingsView: View {
                 Button("Save Folder") {
                     confirmCacheFolderSave()
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(Color(red: 0.96, green: 0.63, blue: 0.22))
+                .appButtonStyle(.primary)
                 .disabled(cacheFolderDraft.trimmingCharacters(in: .whitespacesAndNewlines) == appPreferences.cardImageCacheDirectoryInput)
                 .accessibilityIdentifier("save-card-image-cache-folder-button")
             }
 
             TextField("~/.proxysmith/cache/card-images", text: $cacheFolderDraft)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
                 .font(.system(size: 14, weight: .medium, design: .monospaced))
+                .foregroundStyle(theme.palette.primaryText)
+                .workshopInputField(cornerRadius: 14, fillStyle: .inset)
                 .accessibilityIdentifier("card-image-cache-folder-field")
 
             Text("Leave the field blank to restore the default cache location under `~/.proxysmith/cache/card-images`.")
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundStyle(.white.opacity(0.62))
+                .font(.system(size: 12, weight: .medium))
+                .foregroundStyle(theme.palette.tertiaryText)
         }
-        .padding(18)
-        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .workshopPanel(.raised, cornerRadius: 16, padding: 18)
     }
 
     private var effectiveNextGlobalDeckNumber: Int {
@@ -297,27 +297,30 @@ struct SettingsView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white.opacity(0.64))
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(theme.palette.secondaryText)
 
             if let accessibilityIdentifier {
                 Text(value)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(theme.palette.primaryText)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
                     .accessibilityIdentifier(accessibilityIdentifier)
             } else {
                 Text(value)
                     .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(theme.palette.primaryText)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(18)
-        .background(.white.opacity(0.05), in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .workshopPanel(.raised, cornerRadius: 16, padding: 18)
+    }
+
+    private var theme: AppTheme {
+        AppTheme(colorScheme)
     }
 }
 

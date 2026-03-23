@@ -24,6 +24,8 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   `PrintLayout` owns the canonical A4 and MTG card sizing math.
 - Keep the app native-first.
   Prefer SwiftUI, SwiftData, and Apple frameworks over extra dependencies.
+- Keep the visual system semantic and centralized.
+  Prefer shared theme tokens, button styles, and surface helpers over one-off RGB values or decorative wrappers.
 - Avoid replacing XcodeGen with hand-edited `.pbxproj` changes.
   Update `project.yml`, then regenerate.
 
@@ -37,6 +39,10 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   App bootstrap, scene configuration, SwiftData container.
 - `ProxySmith/App/ContentView.swift`
   Root navigation and deck selection.
+- `ProxySmith/Support/AppBackgroundView.swift`
+  Shared workshop-style canvas used behind the main app surfaces.
+- `ProxySmith/Support/GlassPanelModifier.swift`
+  Semantic theme tokens plus shared surface, button, and input styling helpers.
 - `ProxySmith/Support/AppPreferences.swift`
   Persistent app-level preferences, stored at `~/.proxysmith/settings/preferences.json`.
 - `ProxySmith/Utilities/DeckNameGenerator.swift`
@@ -61,7 +67,11 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 ## Current UX Shape
 
 - Sidebar for deck library.
-- Sidebar actions that sit on glass surfaces should use explicit filled treatments whenever bordered chrome does not create enough contrast for reliable visibility.
+- Light-first print-studio theme with dark-mode support and restrained use of blur/material.
+- Sidebar actions should follow a strict hierarchy:
+  one primary action per region
+  support/secondary actions for utility flows
+  destructive only for destructive actions
 - Deck deletion requires confirmation before removing the selected deck and its cards.
 - Main deck workspace with:
   editable name
@@ -103,4 +113,5 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Treat any user request to commit as an implicit request to refresh `CHANGELOG.md` and the relevant context files before creating the commit.
 - Keep confirmation around destructive deck deletion so users do not remove decks accidentally.
 - Keep deck-list and add-cards search card previews visually and behaviorally aligned.
+- Keep the reduced-glass theme direction intact; do not reintroduce layered glass cards as the default surface treatment.
 - If you change print math, bleed sampling, corner-style handling, border-color handling, or Scryfall behavior, update this file.

@@ -55,6 +55,8 @@ struct CardPreviewButton: View {
 }
 
 private struct CardPreviewPopoverContent: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let previewImageURL: URL?
     let enlargedImageURL: URL?
     let title: String
@@ -64,46 +66,48 @@ private struct CardPreviewPopoverContent: View {
     let titleAccessibilityIdentifier: String
 
     var body: some View {
-        ZStack {
-            AppBackgroundView()
+        VStack(alignment: .leading, spacing: 14) {
+            ZoomableCardArtwork(
+                url: enlargedImageURL ?? previewImageURL,
+                width: CardPreviewMetrics.previewArtworkWidth,
+                height: CardPreviewMetrics.previewArtworkHeight,
+                cornerRadius: CardPreviewMetrics.previewCornerRadius
+            )
+            .frame(
+                width: CardPreviewMetrics.previewArtworkWidth,
+                height: CardPreviewMetrics.previewArtworkHeight
+            )
 
-            VStack(alignment: .leading, spacing: 14) {
-                ZoomableCardArtwork(
-                    url: enlargedImageURL ?? previewImageURL,
-                    width: CardPreviewMetrics.previewArtworkWidth,
-                    height: CardPreviewMetrics.previewArtworkHeight,
-                    cornerRadius: CardPreviewMetrics.previewCornerRadius
-                )
-                .frame(
-                    width: CardPreviewMetrics.previewArtworkWidth,
-                    height: CardPreviewMetrics.previewArtworkHeight
-                )
+            VStack(alignment: .leading, spacing: 6) {
+                Text(title)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(theme.palette.primaryText)
+                    .accessibilityIdentifier(titleAccessibilityIdentifier)
 
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(title)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .accessibilityIdentifier(titleAccessibilityIdentifier)
-
-                    if typeLine.isEmpty == false {
-                        Text(typeLine)
-                            .font(.system(size: 13, weight: .medium, design: .rounded))
-                            .foregroundStyle(.white.opacity(0.76))
-                    }
-
-                    Text(setLine)
-                        .font(.caption)
-                        .foregroundStyle(.white.opacity(0.62))
+                if typeLine.isEmpty == false {
+                    Text(typeLine)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(theme.palette.secondaryText)
                 }
+
+                Text(setLine)
+                    .font(.caption)
+                    .foregroundStyle(theme.palette.tertiaryText)
             }
-            .padding(20)
-            .accessibilityIdentifier(panelAccessibilityIdentifier)
         }
+        .workshopPanel(.panel, cornerRadius: 20, padding: 18)
+        .accessibilityIdentifier(panelAccessibilityIdentifier)
         .frame(width: CardPreviewMetrics.previewPanelWidth)
+    }
+
+    private var theme: AppTheme {
+        AppTheme(colorScheme)
     }
 }
 
 struct CardArtworkContent: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     let url: URL?
     let width: CGFloat
     let height: CGFloat
@@ -118,7 +122,7 @@ struct CardArtworkContent: View {
                 .scaledToFill()
         } placeholder: {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .fill(.white.opacity(0.08))
+                .fill(theme.palette.insetPanel)
                 .overlay {
                     ProgressView()
                 }
@@ -127,8 +131,12 @@ struct CardArtworkContent: View {
         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                .stroke(.white.opacity(0.16), lineWidth: 1)
+                .stroke(theme.palette.divider.opacity(0.7), lineWidth: 1)
         }
+    }
+
+    private var theme: AppTheme {
+        AppTheme(colorScheme)
     }
 }
 
