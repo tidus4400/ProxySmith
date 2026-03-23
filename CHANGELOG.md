@@ -18,6 +18,7 @@
 
 ### Changed
 
+- The app now uses a light-first print-studio theme with dark-mode support, semantic color tokens, solid desktop-style surfaces, and a reduced-glass visual hierarchy across the sidebar, workspace, search, preview, and settings flows.
 - Print layout math now separates trim and bleed bounds so cards stay physically spaced apart, shared bleed gaps split half-and-half per neighboring card, and cut guides stay on the final trim line.
 - PDF export bleed now samples real per-edge colors from each card image when available, blends corner bleed blocks from adjacent sampled edges, and falls back to Scryfall border-color metadata when image sampling is unavailable.
 - Deck selection now tracks stable deck IDs so workspace state and UI automation stay consistent while SwiftData refreshes live query results.

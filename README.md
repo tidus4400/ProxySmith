@@ -1,6 +1,6 @@
 # ProxySmith
 
-ProxySmith is a native macOS app for building Magic: The Gathering proxy sheets. It uses SwiftUI for the UI, SwiftData for deck persistence, Scryfall for card metadata/art, and a custom A4 PDF exporter tuned to real card dimensions.
+ProxySmith is a native macOS app for building Magic: The Gathering proxy sheets. It uses SwiftUI for the UI, SwiftData for deck persistence, Scryfall for card metadata/art, and a custom A4 PDF exporter tuned to real card dimensions. The current UI uses a light-first print-studio theme with dark-mode support, solid desktop-style surfaces, and a calmer workspace-focused hierarchy.
 
 ## Current Scope
 
@@ -41,7 +41,7 @@ xcodebuild -scheme ProxySmith -destination 'platform=macOS' test
 - `ProxySmith/Views`
   Sidebar, deck workspace, search popover, PDF preview, and deck rows.
 - `ProxySmith/Support`
-  Shared environment services and visual styling helpers.
+  Shared environment services, theme tokens, and visual styling helpers.
 - `ProxySmith/Utilities`
   Print and page layout math.
 - `TestAssets/CardPreviewFixtures`

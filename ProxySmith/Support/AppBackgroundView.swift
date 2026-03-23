@@ -1,53 +1,62 @@
 import SwiftUI
 
 struct AppBackgroundView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
+        let theme = AppTheme(colorScheme)
+
         ZStack {
             LinearGradient(
                 colors: [
-                    Color(red: 0.09, green: 0.11, blue: 0.15),
-                    Color(red: 0.13, green: 0.15, blue: 0.18),
-                    Color(red: 0.18, green: 0.15, blue: 0.13)
+                    theme.palette.canvasSecondary,
+                    theme.palette.canvas
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
 
-            Circle()
-                .fill(Color(red: 0.95, green: 0.55, blue: 0.28).opacity(0.25))
-                .frame(width: 460, height: 460)
-                .blur(radius: 60)
-                .offset(x: 420, y: -240)
+            Ellipse()
+                .fill(theme.palette.warmGlow)
+                .frame(width: 520, height: 360)
+                .blur(radius: 80)
+                .offset(x: 360, y: -260)
 
-            Circle()
-                .fill(Color(red: 0.33, green: 0.76, blue: 0.73).opacity(0.22))
-                .frame(width: 420, height: 420)
-                .blur(radius: 40)
-                .offset(x: -360, y: 240)
+            Ellipse()
+                .fill(theme.palette.coolGlow)
+                .frame(width: 420, height: 300)
+                .blur(radius: 70)
+                .offset(x: -320, y: 260)
 
             Rectangle()
-                .fill(.white.opacity(0.04))
-                .mask {
+                .fill(.clear)
+                .overlay {
                     Canvas { context, size in
-                        let spacing: CGFloat = 32
+                        let spacing: CGFloat = 34
+                        let majorSpacing = spacing * 4
+                        let minorLine = theme.palette.divider.opacity(colorScheme == .dark ? 0.08 : 0.16)
+                        let majorLine = theme.palette.divider.opacity(colorScheme == .dark ? 0.14 : 0.22)
+
                         for x in stride(from: 0, through: size.width, by: spacing) {
+                            let color = x.truncatingRemainder(dividingBy: majorSpacing) == 0 ? majorLine : minorLine
                             context.fill(
                                 Path(CGRect(x: x, y: 0, width: 1, height: size.height)),
-                                with: .color(.white.opacity(0.35))
+                                with: .color(color)
                             )
                         }
 
                         for y in stride(from: 0, through: size.height, by: spacing) {
+                            let color = y.truncatingRemainder(dividingBy: majorSpacing) == 0 ? majorLine : minorLine
                             context.fill(
                                 Path(CGRect(x: 0, y: y, width: size.width, height: 1)),
-                                with: .color(.white.opacity(0.25))
+                                with: .color(color)
                             )
                         }
                     }
                 }
-                .blendMode(.softLight)
+                .blendMode(colorScheme == .dark ? .overlay : .multiply)
+                .opacity(colorScheme == .dark ? 0.45 : 0.32)
         }
         .ignoresSafeArea()
     }
 }
-
