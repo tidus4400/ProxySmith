@@ -15,10 +15,11 @@
 - Added a Settings window for deck-numbering controls, including a global numbering toggle and a counter reset action.
 - Added UI tests for default deck numbering and settings-driven number reuse.
 - Added unit tests for deck-name generation, app-preference persistence, and card-image cache refresh behavior.
+- Added a UI regression test that verifies `Sync with System` re-applies immediately while the Settings window stays open.
 
 ### Changed
 
-- Settings now includes an app-wide appearance mode with `Sync with System`, `Light`, and `Dark`, and ProxySmith applies that preference live across both the main window and the Settings window while preserving compatibility with older preference files.
+- Settings now includes an app-wide appearance mode with `Sync with System`, `Light`, and `Dark`, and ProxySmith applies that preference live across both the main window and the Settings window, including immediate reversion when switching back to `Sync with System`, while preserving compatibility with older preference files.
 - The app now uses a light-first print-studio theme with dark-mode support, semantic color tokens, solid desktop-style surfaces, and a reduced-glass visual hierarchy across the sidebar, workspace, search, preview, and settings flows.
 - Print layout math now separates trim and bleed bounds so cards stay physically spaced apart, shared bleed gaps split half-and-half per neighboring card, and cut guides stay on the final trim line.
 - PDF export bleed now samples real per-edge colors from each card image when available, blends corner bleed blocks from adjacent sampled edges, and falls back to Scryfall border-color metadata when image sampling is unavailable.

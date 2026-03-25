@@ -70,6 +70,9 @@ struct SettingsView: View {
         } message: {
             Text(cacheFolderErrorMessage)
         }
+        .overlay(alignment: .topLeading) {
+            AppAppearanceProbeView(accessibilityIdentifier: "settings-effective-appearance-probe")
+        }
     }
 
     private var headerPanel: some View {

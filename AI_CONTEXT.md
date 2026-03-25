@@ -87,6 +87,7 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
   sync with system
   force light
   force dark
+- Appearance preference changes should apply immediately to both the main window and the Settings window, including when switching back to sync with system while Settings remains open.
 - Search sheet for Scryfall-driven card lookup.
 
 ## Known Constraints
@@ -118,5 +119,6 @@ The app should feel polished and Mac-native, not like a thin CRUD shell.
 - Keep confirmation around destructive deck deletion so users do not remove decks accidentally.
 - Keep deck-list and add-cards search card previews visually and behaviorally aligned.
 - Keep the reduced-glass theme direction intact; do not reintroduce layered glass cards as the default surface treatment.
-- Keep the app-wide appearance override flowing through shared preferences and scene-level color-scheme application rather than view-by-view overrides.
+- Keep the app-wide appearance override flowing through shared preferences and AppKit-backed application/window appearance updates rather than view-by-view overrides.
+- Keep the hidden main/settings appearance accessibility probes in place if you touch theme application again; they anchor the regression test for immediate `Sync with System` fallback.
 - If you change print math, bleed sampling, corner-style handling, border-color handling, or Scryfall behavior, update this file.

@@ -1,6 +1,6 @@
+import AppKit
 import Foundation
 import Observation
-import SwiftUI
 
 enum AppAppearanceMode: String, Codable, CaseIterable, Sendable {
     case system
@@ -40,14 +40,14 @@ enum AppAppearanceMode: String, Codable, CaseIterable, Sendable {
         }
     }
 
-    var preferredColorScheme: ColorScheme? {
+    var nsAppearance: NSAppearance? {
         switch self {
         case .system:
             nil
         case .light:
-            .light
+            NSAppearance(named: .aqua)
         case .dark:
-            .dark
+            NSAppearance(named: .darkAqua)
         }
     }
 }
@@ -151,10 +151,6 @@ final class AppPreferences {
 
     var cardImageCacheLifetime: TimeInterval {
         TimeInterval(cardImageCachePeriodDays * 24 * 60 * 60)
-    }
-
-    var preferredColorScheme: ColorScheme? {
-        appearanceMode.preferredColorScheme
     }
 
     var settingsFileLocationDescription: String {

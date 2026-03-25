@@ -178,6 +178,49 @@ final class ProxySmithUITests: XCTestCase {
     }
 
     @MainActor
+    func testSystemAppearanceAppliesImmediatelyWithoutClosingSettings() throws {
+        let app = makeApp()
+        app.terminateIfRunning()
+        app.launch()
+        app.activate()
+
+        let window = app.mainWindow
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        let mainAppearanceProbe = app.staticTexts["main-effective-appearance-probe"]
+        XCTAssertTrue(mainAppearanceProbe.waitForExistence(timeout: 5))
+
+        guard let initialSystemAppearance = mainAppearanceProbe.currentStringValue else {
+            XCTFail("Expected main appearance probe value")
+            return
+        }
+        XCTAssertTrue(["light", "dark"].contains(initialSystemAppearance))
+
+        let settingsButton = libraryWindow(app).buttons["sidebar-open-settings-button"]
+        XCTAssertTrue(settingsButton.waitForExistence(timeout: 5))
+        settingsButton.click()
+
+        let settingsAppearanceProbe = app.staticTexts["settings-effective-appearance-probe"]
+        XCTAssertTrue(settingsAppearanceProbe.waitForExistence(timeout: 5))
+        XCTAssertTrue(waitForStringValue(of: settingsAppearanceProbe, toBe: initialSystemAppearance))
+
+        let forcedAppearance = initialSystemAppearance == "dark" ? "light" : "dark"
+        let forcedAppearanceButton = app.buttons["appearance-mode-\(forcedAppearance)-button"]
+        XCTAssertTrue(forcedAppearanceButton.waitForExistence(timeout: 5))
+        forcedAppearanceButton.click()
+
+        XCTAssertTrue(waitForStringValue(of: mainAppearanceProbe, toBe: forcedAppearance))
+        XCTAssertTrue(waitForStringValue(of: settingsAppearanceProbe, toBe: forcedAppearance))
+
+        let systemAppearanceButton = app.buttons["appearance-mode-system-button"]
+        XCTAssertTrue(systemAppearanceButton.waitForExistence(timeout: 5))
+        systemAppearanceButton.click()
+
+        XCTAssertTrue(waitForStringValue(of: mainAppearanceProbe, toBe: initialSystemAppearance))
+        XCTAssertTrue(waitForStringValue(of: settingsAppearanceProbe, toBe: initialSystemAppearance))
+    }
+
+    @MainActor
     func testCancelingDeckDeletionKeepsSelectedDeck() throws {
         let app = makeApp()
         app.terminateIfRunning()
@@ -558,5 +601,15 @@ private func waitForCount(
 ) -> Bool {
     let predicate = NSPredicate(format: "count == %d", expectedCount)
     let expectation = XCTNSPredicateExpectation(predicate: predicate, object: query)
+    return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
+}
+
+private func waitForStringValue(
+    of element: XCUIElement,
+    toBe expectedValue: String,
+    timeout: TimeInterval = 5
+) -> Bool {
+    let predicate = NSPredicate(format: "label == %@ OR value == %@", expectedValue, expectedValue)
+    let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
     return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
 }

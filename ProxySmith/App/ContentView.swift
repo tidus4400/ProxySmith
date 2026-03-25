@@ -83,6 +83,9 @@ struct ContentView: View {
                 self.selectedDeckID = decks.first?.id
             }
         }
+        .overlay(alignment: .topLeading) {
+            AppAppearanceProbeView(accessibilityIdentifier: "main-effective-appearance-probe")
+        }
     }
 
     private var selectedDeck: Deck? {

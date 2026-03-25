@@ -1,3 +1,4 @@
+import AppKit
 import SwiftData
 import SwiftUI
 
@@ -70,6 +71,55 @@ private struct AppAppearanceRootView<Content: View>: View {
 
     var body: some View {
         content
-            .preferredColorScheme(appPreferences.preferredColorScheme)
+            .background {
+                AppAppearanceApplier(appearanceMode: appPreferences.appearanceMode)
+                    .frame(width: 0, height: 0)
+            }
+    }
+}
+
+struct AppAppearanceProbeView: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    let accessibilityIdentifier: String
+
+    var body: some View {
+        Text(colorScheme == .dark ? "dark" : "light")
+            .font(.caption2)
+            .foregroundStyle(.clear)
+            .opacity(0.001)
+            .frame(width: 1, height: 1)
+            .allowsHitTesting(false)
+            .accessibilityIdentifier(accessibilityIdentifier)
+    }
+}
+
+private struct AppAppearanceApplier: NSViewRepresentable {
+    let appearanceMode: AppAppearanceMode
+
+    func makeNSView(context: Context) -> AppAppearanceApplyingView {
+        let view = AppAppearanceApplyingView()
+        view.appearanceMode = appearanceMode
+        return view
+    }
+
+    func updateNSView(_ nsView: AppAppearanceApplyingView, context: Context) {
+        nsView.appearanceMode = appearanceMode
+        nsView.applyAppearance()
+    }
+}
+
+private final class AppAppearanceApplyingView: NSView {
+    var appearanceMode: AppAppearanceMode = .system
+
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        applyAppearance()
+    }
+
+    func applyAppearance() {
+        let appearance = appearanceMode.nsAppearance
+        NSApp.appearance = appearance
+        window?.appearance = appearance
     }
 }
